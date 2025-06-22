@@ -1,0 +1,9 @@
+{
+  "appId": "com.operrate.mobilevanilla",
+  "appName": "operrateMobileVanilla",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http"
+  }
+}
+

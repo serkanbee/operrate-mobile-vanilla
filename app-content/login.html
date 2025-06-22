@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Operrate Login</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        
+        <!-- Push notification test section -->
+        <div id="pushNotificationSection" style="margin-top: 20px; padding: 20px; border: 2px solid #007bff; background-color: #f8f9fa;">
+            <h3>🔔 Push Notifications</h3>
+            <p id="pushStatus">Loading...</p>
+            <button id="testPushBtn">🧪 Test Push Notification</button>
+        </div>
+        
+        <p id="loginMessage" class="message"></p>
+        <p><a href="index.html">Change Backend URL</a></p>
+        <!-- Just add this button next to your existing test button -->
+
+            <!-- Just add this button next to your existing test button -->
+        <button id="testLocalBtn" style="margin-left: 10px; background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 4px;">
+            📱 Test Local Notification
+        </button>
+
+
+    </div>
+    
+    <script type="module" src="js/login.js"></script>
+</body>
+</html>

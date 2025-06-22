@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <!-- You could add <certificates src="user" /> if needed for user-installed CAs during dev -->
+        </trust-anchors>
+    </base-config>
+    <!-- You can also define domain-specific configurations here if needed -->
+    <!-- 
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">your-dev-domain.com</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain> 
+    </domain-config>
+    -->
+</network-security-config>
+
+

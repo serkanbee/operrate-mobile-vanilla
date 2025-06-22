@@ -1,0 +1,28 @@
+{
+  "name": "operratemobilevanilla",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "parcel app-content/index.html --dist-dir dev-dist",
+    "build": "parcel build app-content/*.html --dist-dir dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@capacitor/android": "^7.3.0",
+    "@capacitor/app": "^7.0.1",
+    "@capacitor/core": "^7.3.0",
+    "@capacitor/ios": "^7.4.0",
+    "@capacitor/keyboard": "^7.0.1",
+    "@capacitor/local-notifications": "^7.0.1",
+    "@capacitor/preferences": "^7.0.1",
+    "@capacitor/push-notifications": "^7.0.1",
+    "@capacitor/status-bar": "^7.0.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.3.0",
+    "parcel": "^2.15.2"
+  }
+}

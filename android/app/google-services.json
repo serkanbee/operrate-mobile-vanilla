@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "845475939973",
+    "project_id": "operrate-notifications",
+    "storage_bucket": "operrate-notifications.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845475939973:android:e7132b4044d7d60d99cbec",
+        "android_client_info": {
+          "package_name": "com.company.operrateMobileVanilla"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMKJDCAZVLuw1TcypKw5KmxU9c7aPkZso"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845475939973:android:0aefacf68ba398ae99cbec",
+        "android_client_info": {
+          "package_name": "com.operrate.mobilevanilla"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMKJDCAZVLuw1TcypKw5KmxU9c7aPkZso"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

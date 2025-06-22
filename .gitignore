@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Build outputs
+dist/
+build/
+www/
+
+# Capacitor
+.capacitor/
+ios/App/App/public/
+android/app/src/main/assets/public/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment variables (if you have any)
+.env
+.env.local
+.env.production
+
+# Temporary files
+*.tmp
+*.temp
