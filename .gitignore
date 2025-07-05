@@ -33,3 +33,6 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+.parcel-cache/
+*.p8
+ios/App/App.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
