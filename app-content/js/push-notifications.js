@@ -99,7 +99,7 @@ async getFCMTokenFromPreferences() {
     return new Promise((resolve, reject) => {
         const poll = setInterval(async () => {
             try {
-                const { value } = await Preferences.get({ key: 'fcmToken' });
+                const { value } = await Preferences.get({ key: 'deviceToken' });
 
                 if (value) {
                     console.log(`✅ [iOS] FCM token retrieved: ${value}`);
