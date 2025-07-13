@@ -2,6 +2,11 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Preferences } from '@capacitor/preferences';
 import { Capacitor } from '@capacitor/core';
+// Add this import at the top of your file with other imports
+import { registerPlugin } from '@capacitor/core';
+// Register the custom plugin
+const AppGroupReaderPlugin = registerPlugin('AppGroupReaderPlugin');
+
 
 class PushNotificationService {
     constructor() {
@@ -46,13 +51,13 @@ class PushNotificationService {
                 await PushNotifications.register();
                 console.log('✅ Push registration process started...');
 
-                if (Capacitor.getPlatform() === 'ios') {
-                    // For iOS, poll for the FCM token saved by AppDelegate into the App Group UserDefaults
-                    this.deviceToken = await this.pollForFcmTokenFromAppGroup();
-                } else {
-                    // For Android, listen for the 'registration' event directly from PushNotifications
-                    this.deviceToken = await new Promise((resolve, reject) => {
-                        const wait = setTimeout(() => {
+                    if (Capacitor.getPlatform() === 'ios') {
+                    // For iOS, get the FCM token from Preferences (where Swift saved it)
+                    this.deviceToken = await this.getFCMTokenFromPreferences();
+                    } else {
+                // For Android, listen for the 'registration' event directly from PushNotifications
+                     this.deviceToken = await new Promise((resolve, reject) => {
+                      const wait = setTimeout(() => {
                             reject(new Error('Timed out waiting for Android registration token.'));
                         }, 15000); // 15 seconds timeout
 
@@ -83,43 +88,43 @@ class PushNotificationService {
         }
     }
 
-    // --- NEW HELPER METHOD TO POLL FOR THE TOKEN ON IOS FROM APP GROUP ---
-    pollForFcmTokenFromAppGroup() {
-        return new Promise((resolve, reject) => {
-            const maxAttempts = 20; // Try for 10 seconds (20 * 500ms)
-            const interval = 500; // Check every 500ms
-            let attempts = 0;
+// Add this method to your PushNotificationService class
+async getFCMTokenFromPreferences() {
+    const maxAttempts = 20;
+    const interval = 500;
+    let attempts = 0;
 
-            console.log('⏳ [iOS] Starting to poll for FCM token from App Group Preferences...');
+    console.log('⏳ [iOS] Getting FCM token from Preferences...');
 
-            const poll = setInterval(async () => {
-                try {
-                    // IMPORTANT: Use the same App Group Identifier as in AppDelegate.swift
-                    // The 'group' option is crucial for accessing shared UserDefaults.
-                    const { value } = await Preferences.get({ key: 'fcmToken', group: 'group.com.operrate.mobilevanilla' });
+    return new Promise((resolve, reject) => {
+        const poll = setInterval(async () => {
+            try {
+                const { value } = await Preferences.get({ key: 'fcmToken' });
 
-                    if (value) {
-                        console.log(`✅ [iOS] Successfully fetched FCM token from App Group: ${value}`);
-                        clearInterval(poll);
-                        resolve(value);
-                    } else {
-                        attempts++;
-                        if (attempts >= maxAttempts) {
-                            clearInterval(poll);
-                            console.error('❌ [iOS] Timed out polling for FCM token from App Group.');
-                            reject(new Error('Timed out waiting for FCM token from App Group.'));
-                        } else {
-                            console.log(`...[iOS] polling attempt ${attempts}, token not found yet in App Group.`);
-                        }
-                    }
-                } catch (error) {
+                if (value) {
+                    console.log(`✅ [iOS] FCM token retrieved: ${value}`);
                     clearInterval(poll);
-                    console.error('❌ [iOS] Error while polling for FCM token from App Group:', error);
-                    reject(error);
+                    resolve(value);
+                } else {
+                    attempts++;
+                    if (attempts >= maxAttempts) {
+                        clearInterval(poll);
+                        console.error('❌ [iOS] Timed out getting FCM token.');
+                        reject(new Error('Timed out waiting for FCM token.'));
+                    } else {
+                        console.log(`...[iOS] attempt ${attempts}, FCM token not ready yet.`);
+                    }
                 }
-            }, interval);
-        });
-    }
+            } catch (error) {
+                clearInterval(poll);
+                console.error('❌ [iOS] Error getting FCM token:', error);
+                reject(error);
+            }
+        }, interval);
+    });
+}
+
+
 
     // --- MODIFIED addListeners METHOD ---
     addListeners() {
