@@ -1,6 +1,7 @@
 
 import { Preferences } from '@capacitor/preferences';
 import { Capacitor } from '@capacitor/core';
+import { Device } from '@capacitor/device';
 import PushNotificationService from './push-notifications.js';
 
 console.log('🔧 LOGIN.JS FILE LOADED - Android Debug');
@@ -51,6 +52,27 @@ console.log('🔧 Login form submitted');
 const email = document.getElementById('email').value;
 const password = document.getElementById('password').value;
 
+// Gather stable device id and friendly name for per-device session dedupe
+let deviceId = null;
+let deviceName = null;
+try {
+    const idInfo = await Device.getId();
+    deviceId = idInfo?.identifier || null;
+    const info = await Device.getInfo();
+    deviceName = info?.model || info?.platform || 'mobile';
+} catch (_) {
+    // Fallback: persist a random UUID once
+    const existing = (await Preferences.get({ key: 'deviceId' }))?.value;
+    if (existing) {
+        deviceId = existing;
+    } else {
+        const uuid = crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        await Preferences.set({ key: 'deviceId', value: uuid });
+        deviceId = uuid;
+    }
+    deviceName = 'mobile';
+}
+
 try {
 const { value: backendUrl } = await Preferences.get({ key: 'operrate_backend_url' });
 
@@ -66,7 +88,7 @@ method: 'POST',
 headers: {
 'Content-Type': 'application/json',
 },
-body: JSON.stringify({ email, password })
+    body: JSON.stringify({ email, password, deviceId, deviceName })
 });
 
 const result = await response.json();
