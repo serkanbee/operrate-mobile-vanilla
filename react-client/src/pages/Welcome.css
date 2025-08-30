@@ -5,25 +5,20 @@
 
 html, body, #root, ion-app, ion-page, ion-content {
   height: 100%;
-  /* background: #fff; */
-  /* background: #eff2f6; */
   background: #a4a6a7 !important;
 }
 
-/* Main content flex column */
 .welcome-content {
   --padding-top: 0;
   --padding-bottom: 0;
   display: flex;
   flex-direction: column;
-  justify-content: stretch;
 }
 
 .welcome-inner {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: 1fr auto;
 }
 
 /* Centered section */
@@ -32,19 +27,15 @@ html, body, #root, ion-app, ion-page, ion-content {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 40px;
-}
-
-.typed-text-area-wrap {
+  align-self: center;
+  justify-self: center;
   text-align: center;
-  max-width: 90%;
 }
 
 /* Logo in rounded black box */
 .logo-wrap {
   width: 140px;
   height: 140px;
-  /* background: var(--oper-rate-black); */
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -67,25 +58,66 @@ html, body, #root, ion-app, ion-page, ion-content {
 
 /* Typed text more prominent */
 .typed-heading {
-  font-size: 1rem;
+  /* Shared metrics for a stable two-line block */
+  --typed-line-h: 1.6em;
+  --typed-gap: 0.4em;
+
+  /* Gentle responsiveness to avoid wrap on very narrow screens */
+  font-size: clamp(0.88rem, 2vw + 0.2rem, 1rem);
   font-weight: 400;
   color: rgba(0,0,0,0.9);
   text-align: center;
   margin: 0 0 30px;
-}
-.typed-text {
-  font-weight: 700;
-  color: black
-  /* color: var(--oper-rate-orange); */
+
+  /* Fix total height to two lines + gap to prevent bounce */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: calc(var(--typed-line-h) * 2 + var(--typed-gap));
 }
 
-/* Spacer pushes footer down */
-.spacer {
-  flex: 1;
+/* Prefix on its own line for absolute stability */
+.typed-prefix {
+  display: block;
+  margin-bottom: var(--typed-gap);
+  line-height: var(--typed-line-h);
+  height: auto; /* avoid glyph clipping */
+  white-space: nowrap; /* keep prefix on one line */
 }
+.typed-text {
+  display: inline-block;
+  font-weight: 700;
+  color: #000;
+}
+
+
+/* Single-line container for typed text + cursor */
+.typed-line {
+  display: inline-block;
+  white-space: nowrap;
+  line-height: var(--typed-line-h);
+  height: var(--typed-line-h);
+}
+
+/* typed cursor alignment helpers */
+
+/* Keep the cursor inline and aligned with the typed text */
+.typed-line .typed-cursor,
+.typed-text + .typed-cursor {
+  display: inline-block;
+  line-height: var(--typed-line-h);
+  height: var(--typed-line-h);
+  vertical-align: baseline;
+}
+
+
+/* Spacer pushes footer down */
+.spacer { display: none; }
 
 /* CTA area at bottom */
 .welcome-footer {
+  grid-row: 2;
   padding: 20px 16px calc(env(safe-area-inset-bottom) + 20px);
 }
 

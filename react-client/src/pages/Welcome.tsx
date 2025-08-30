@@ -13,13 +13,14 @@ const Welcome: React.FC = () => {
       strings: [
         'facilities maintenance',
         'help desk requests',
-        'assests and inventory',
+        'assests and inventory.',
         
       ],
       typeSpeed: 45,
       backSpeed: 25,
-      backDelay: 1400,
+      backDelay: 2500,
       loop: true,
+      smartBackspace: true,
       cursorChar: '|'
     });
     return () => typed.destroy();
@@ -40,14 +41,7 @@ const Welcome: React.FC = () => {
       <IonContent fullscreen className="welcome-content">
         <div className="welcome-inner">
           {/* Centered area */}
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-          
+        
           
           <div className="welcome-center">
             <div className="logo-wrap">
@@ -57,8 +51,10 @@ const Welcome: React.FC = () => {
             <h1 className="welcome-title">Welcome to Operrate</h1>
             <div className="typed-text-area-wrap">
             <h3 className="typed-heading">
-              A smarter way to manage:&nbsp;
-              <span ref={typedTarget} className="typed-text" />
+              <span className="typed-prefix">A smarter way to manage:</span>
+              <span className="typed-line">
+                <span ref={typedTarget} className="typed-text" />
+              </span>
             </h3>
             </div>
           </div>
