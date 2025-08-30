@@ -1,0 +1,16 @@
+{
+  "appId": "com.operrate.mobilevanilla",
+  "appName": "operrateMobileVanilla",
+  "webDir": "build",
+  "server": {
+    "androidScheme": "http"
+  },
+  "plugins": {
+    "Preferences": {
+      "group": "group.com.operrate.mobilevanilla"
+    },
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  }
+}

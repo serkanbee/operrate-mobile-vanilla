@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <!-- Base shape -->
+    <path d="M20 50 
+             C20 20, 80 20, 80 50
+             C80 65, 65 75, 50 75
+             C35 75, 20 65, 20 50
+             Z" 
+          fill="#FF8C00"/>
+    
+    <!-- Dynamic lines representing flow/operation -->
+    <path d="M35 40 
+             Q50 40, 50 55
+             Q50 70, 65 70" 
+          fill="none" 
+          stroke="white" 
+          stroke-width="6" 
+          stroke-linecap="round"/>
+    
+    <!-- Secondary curve -->
+    <path d="M65 40 
+             Q50 40, 50 25" 
+          fill="none" 
+          stroke="white" 
+          stroke-width="6" 
+          stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,130 @@
+:root {
+  --oper-rate-orange: #ff7a00;
+  --oper-rate-black: #0b0b0b;
+}
+
+html, body, #root, ion-app, ion-page, ion-content {
+  height: 100%;
+  /* background: #fff; */
+  /* background: #eff2f6; */
+  background: #a4a6a7 !important;
+}
+
+/* Main content flex column */
+.welcome-content {
+  --padding-top: 0;
+  --padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+
+.welcome-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Centered section */
+.welcome-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 40px;
+}
+
+.typed-text-area-wrap {
+  text-align: center;
+  max-width: 90%;
+}
+
+/* Logo in rounded black box */
+.logo-wrap {
+  width: 140px;
+  height: 140px;
+  /* background: var(--oper-rate-black); */
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+.logo-img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+/* Title smaller than typed text */
+.welcome-title {
+  margin: 0 0 30px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--oper-rate-black);
+}
+
+/* Typed text more prominent */
+.typed-heading {
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(0,0,0,0.9);
+  text-align: center;
+  margin: 0 0 30px;
+}
+.typed-text {
+  font-weight: 700;
+  color: black
+  /* color: var(--oper-rate-orange); */
+}
+
+/* Spacer pushes footer down */
+.spacer {
+  flex: 1;
+}
+
+/* CTA area at bottom */
+.welcome-footer {
+  padding: 20px 16px calc(env(safe-area-inset-bottom) + 20px);
+}
+
+.start-btn {
+  --background: var(--oper-rate-orange);
+  --color: white;
+  --border-radius: 12px;
+  --box-shadow: none;
+  height: 48px;
+  font-size: 16px;
+}
+
+/* Loader overlay */
+.dots-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.dots-loader {
+  display: flex;
+  gap: 10px;
+}
+.dots-loader span {
+  width: 12px;
+  height: 12px;
+  background: var(--oper-rate-orange);
+  border-radius: 50%;
+  animation: jump 0.72s infinite ease-in-out;
+}
+.dots-loader span:nth-child(2) { animation-delay: 0.12s; }
+.dots-loader span:nth-child(3) { animation-delay: 0.24s; }
+
+@keyframes jump {
+  0% { transform: translateY(0); opacity: 0.65; }
+  50% { transform: translateY(-8px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0.65; }
+}
