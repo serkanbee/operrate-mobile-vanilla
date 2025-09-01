@@ -1,2 +1,54 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
+
+:root {
+	--oper-rate-orange: #ff7a00;
+	--oper-rate-black: #0b0b0b;
+
+	/* App theme colors */
+	--color-primary: var(--oper-rate-orange);
+	--color-text-primary: rgba(0, 0, 0, 0.9);
+
+	/* Global button styles */
+	--btn-primary-bg: var(--oper-rate-orange);
+	/* Slightly faded orange for pressed/activated state */
+	--btn-primary-bg-pressed: #ff8f3a;
+	--btn-danger-bg: #e53935;
+	/* Slightly less bright red when pressed */
+	--btn-danger-bg-pressed: #f25551;
+	--btn-font-size: 16px;
+	--btn-height: 48px;
+	--btn-radius: 12px;
+
+	/* App base font size (match Welcome static "A smarter way…") */
+	--app-font-size-base: clamp(0.88rem, 2vw + 0.2rem, 1rem);
+
+		/* App surfaces */
+		--app-bg: #ffffff; /* Body/background color used across pages */
+		--app-header-footer-bg: var(--app-bg);
+		--app-header-footer-color: #000;
+
+	/* Map Ionic color system to brand colors */
+	--ion-color-primary: var(--oper-rate-orange);
+	--ion-color-primary-rgb: 255, 122, 0;
+	--ion-color-primary-contrast: #ffffff;
+	--ion-color-primary-contrast-rgb: 255, 255, 255;
+	--ion-color-primary-shade: #e06c00;
+	--ion-color-primary-tint: #ff8f3a;
+
+	--ion-color-danger: var(--btn-danger-bg);
+	--ion-color-danger-rgb: 229, 57, 53;
+	--ion-color-danger-contrast: #ffffff;
+	--ion-color-danger-contrast-rgb: 255, 255, 255;
+	--ion-color-danger-shade: #cf2f2b;
+	--ion-color-danger-tint: var(--btn-danger-bg-pressed);
+}
+
+/* Apply Ionic global variables so Android matches our light theme */
+:root, .ios, .md {
+	--ion-background-color: var(--app-bg);
+	--ion-text-color: var(--color-text-primary);
+	--ion-color-primary: var(--color-primary);
+	--ion-toolbar-background: var(--app-header-footer-bg);
+	--ion-toolbar-color: var(--app-header-footer-color);
+}

@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IonPage, IonContent, IonButton, useIonRouter, IonToolbar, IonHeader, IonTitle } from '@ionic/react';
+import { IonPage, IonContent, IonButton, useIonRouter, IonToolbar, IonHeader, IonFooter } from '@ionic/react';
 import Typed from 'typed.js';
 import './Welcome.css';
+import FullScreenDots from '../components/FullScreenDots';
 
 const Welcome: React.FC = () => {
   const typedTarget = useRef<HTMLSpanElement | null>(null);
@@ -36,13 +37,15 @@ const Welcome: React.FC = () => {
 
   return (
     <IonPage>
+      <IonHeader>
+        <IonToolbar style={{ '--background': 'var(--app-header-footer-bg)', '--color': 'var(--app-header-footer-color)', '--border-width': '0' } as any}>
+          {/* No title on the Welcome page */}
+        </IonToolbar>
+      </IonHeader>
 
-        
-      <IonContent fullscreen className="welcome-content">
+      <IonContent fullscreen className="welcome-content" style={{ '--background': 'var(--app-bg)' } as any}>
         <div className="welcome-inner">
           {/* Centered area */}
-        
-          
           <div className="welcome-center">
             <div className="logo-wrap">
               <img src="/assets/logo.svg" alt="Operrate logo" className="logo-img" />
@@ -58,27 +61,22 @@ const Welcome: React.FC = () => {
             </h3>
             </div>
           </div>
-
-          {/* Spacer pushes button to bottom */}
-          <div className="spacer" />
-
-          {/* Bottom CTA */}
-          <div className="welcome-footer">
-            <IonButton expand="block" onClick={handleStart} className="start-btn">
-              Let’s get started
-            </IonButton>
-          </div>
         </div>
 
-        {/* Loader overlay */}
-        {loading && (
-          <div className="dots-overlay">
-            <div className="dots-loader">
-              <span></span><span></span><span></span>
-            </div>
-          </div>
-        )}
+  <FullScreenDots show={loading} ariaLabel="Loading" />
       </IonContent>
+
+      {!loading && (
+        <IonFooter>
+          <IonToolbar style={{ '--background': 'var(--app-header-footer-bg)', '--color': 'var(--app-header-footer-color)', '--border-width': '0' } as any}>
+            <div className="welcome-footer">
+              <IonButton expand="block" color="primary" onClick={handleStart} className="start-btn">
+                Let’s get started
+              </IonButton>
+            </div>
+          </IonToolbar>
+        </IonFooter>
+      )}
     </IonPage>
   );
 };

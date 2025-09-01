@@ -1,10 +1,14 @@
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import React, { useEffect } from 'react';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
 
 import Welcome from './pages/Welcome';
 import ScanQr from './pages/ScanQr';
+import Login from './pages/Login';
+
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -31,17 +35,33 @@ import '@ionic/react/css/display.css';
 
 /* import '@ionic/react/css/palettes/dark.always.css'; */
 /* import '@ionic/react/css/palettes/dark.class.css'; */
-import '@ionic/react/css/palettes/dark.system.css';
+// Removed system dark mode to keep a consistent light UI across platforms
+// import '@ionic/react/css/palettes/dark.system.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import './theme/overlays.css';
 
-setupIonicReact();
+// Force a consistent UI across iOS and Android
+setupIonicReact({ mode: 'ios' });
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
+const App: React.FC = () => {
+  useEffect(() => {
+    // Ensure status bar is visible, non-overlaid, and readable on light backgrounds
+    (async () => {
+      try {
+        await StatusBar.setOverlaysWebView({ overlay: false });
+        await StatusBar.setBackgroundColor({ color: '#ffffff' });
+        await StatusBar.setStyle({ style: Style.Light }); // dark text for light backgrounds
+        await StatusBar.show();
+      } catch {}
+    })();
+  }, []);
+
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <IonRouterOutlet>
 
         {/* ✅ Root is now Welcome */}
         {/* <Route exact path="/" component={Home} /> */}
@@ -50,6 +70,9 @@ const App: React.FC = () => (
         </Route>
         <Route exact path="/scan-qr">
           <ScanQr />
+        </Route>
+        <Route exact path="/login">
+          <Login />
         </Route>
         <Route exact path="/"> 
           <Redirect to="/welcome" /> 
@@ -64,9 +87,10 @@ const App: React.FC = () => (
 
         {/* Catch-all: redirect to root */}
         {/* <Redirect exact from="*" to="/" /> */}
-      </IonRouterOutlet>
-    </IonReactRouter>
-  </IonApp>
-);
+        </IonRouterOutlet>
+      </IonReactRouter>
+    </IonApp>
+  );
+};
 
 export default App;

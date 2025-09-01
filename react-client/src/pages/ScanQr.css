@@ -1,0 +1,181 @@
+/* Base backgrounds */
+.scanqr-page.scanning { background: transparent !important; }
+.scanqr-page.scanning::part(content) { background: transparent !important; }
+
+.scanqr-content {
+  position: relative;
+  --background: #fff;
+  background: #fff;
+  color: #111;
+  font-size: var(--app-font-size-base);
+}
+.scanqr-content::part(background) { background: #fff; }
+.scanqr-content::part(scroll) { background: transparent; }
+
+/* Scanning makes the webview transparent to show native camera behind */
+.scanqr-content.scanning {
+  --background: transparent;
+  background: transparent;
+}
+.scanqr-content.scanning::part(background),
+.scanqr-content.scanning::part(scroll) { background: transparent !important; }
+
+.toolbar-title { font-size: 1rem; font-weight: 600; color: var(--app-header-footer-color); padding-left: 8px; }
+
+/* Idle layout */
+.idle-wrap {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 8px;
+  gap: 12px;
+}
+.idle-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.idle-header .title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+.icon-btn { --color: #444; }
+.helper { color: var(--color-text-primary); margin: 0; text-align: center; }
+.idle-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 14px;
+}
+.placeholder-card {
+  width: min(72vw, 320px, 60vh);
+  height: min(72vw, 320px, 60vh);
+  /* border-radius: 16px; */
+  /* background: linear-gradient(135deg, #f7f7f8, #ececee); */
+  /* border: 1px solid #e5e5e7; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+.qr-illus { width: 65%; height: 65%; opacity: 0.95; }
+.qr-illus-icon { font-size: clamp(120px, 36vh, 192px); color: #111; opacity: 0.85; }
+.idle-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 8px 24px;
+  align-items: center;
+  justify-content: center;
+  margin: 6px auto 0;
+  max-width: 360px;
+  text-align: center;
+}
+.action-item { display: flex; flex-direction: column; align-items: center; }
+.action-item .icon-btn { --color: #222; }
+.action-label { font-size: 12px; color: #555; margin-top: 4px; }
+
+/* Footer button area uses .welcome-footer from Welcome.css for consistent spacing */
+.start-btn {
+  --background: var(--btn-primary-bg) !important;
+  --background-activated: var(--btn-primary-bg-pressed) !important;
+  --color: #fff !important;
+  --border-radius: var(--btn-radius);
+  --box-shadow: none;
+  height: var(--btn-height);
+  font-size: var(--btn-font-size);
+}
+
+/* Scanning overlay */
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.crop-frame {
+  position: relative;
+  width: min(72vw, 300px);
+  height: min(72vw, 300px);
+  border-radius: 16px;
+  outline: 2px solid rgba(255,255,255,0.9);
+  /* Dim outside area using giant box-shadow trick */
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.55);
+  pointer-events: none;
+}
+.status {
+  margin-top: 8px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+}
+.controls {
+  position: relative;
+  margin-top: 14px;
+}
+.controls .icon-btn { --color: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35)); }
+.cancel-btn {
+  --background: var(--btn-danger-bg) !important;
+  --background-activated: var(--btn-danger-bg-pressed) !important;
+  --color: #fff !important;
+  border-radius: var(--btn-radius);
+  height: var(--btn-height);
+  font-size: var(--btn-font-size);
+  backdrop-filter: saturate(120%) blur(2px);
+}
+
+/* Success view */
+.success-wrap {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #111;
+  gap: 12px;
+}
+.success-icon { font-size: 96px; color: var(--oper-rate-orange, #ff7a00); }
+.success-msg { font-size: 16px; opacity: 0.95; color: #111; animation: fadeIn 450ms ease-in forwards; animation-delay: 400ms; opacity: 0; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Tick pop animation */
+.tick-animate { animation: tickPop 600ms ease-out; }
+@keyframes tickPop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* Dots reused from Welcome */
+.success-dots { margin-top: 6px; }
+.dots-loader { display: flex; gap: 10px; }
+.dots-loader span { width: 10px; height: 10px; background: var(--oper-rate-orange, #ff7a00); border-radius: 50%; animation: jump 0.72s infinite ease-in-out; }
+.dots-loader span:nth-child(2) { animation-delay: 0.12s; }
+.dots-loader span:nth-child(3) { animation-delay: 0.24s; }
+@keyframes jump { 0% { transform: translateY(0); opacity: 0.65; } 50% { transform: translateY(-6px); opacity: 1; } 100% { transform: translateY(0); opacity: 0.65; } }
+
+/* Success overlay similar to Welcome */
+.dots-overlay.success-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+/* Simple centered message for blocked/error */
+.center-msg {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
