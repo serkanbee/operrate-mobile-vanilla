@@ -1,11 +1,11 @@
 PODS:
-  - Capacitor (7.4.0):
+  - Capacitor (7.4.3):
     - CapacitorCordova
   - CapacitorApp (7.0.2):
     - Capacitor
   - CapacitorCamera (7.0.2):
     - Capacitor
-  - CapacitorCordova (7.4.0)
+  - CapacitorCordova (7.4.3)
   - CapacitorFilesystem (7.1.4):
     - Capacitor
     - IONFilesystemLib (~> 1.0.1)
@@ -67,10 +67,10 @@ PODS:
   - PromisesObjC (2.4.0)
 
 DEPENDENCIES:
-  - "Capacitor (from `../../../node_modules/@capacitor/ios`)"
+  - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
   - "CapacitorCamera (from `../../node_modules/@capacitor/camera`)"
-  - "CapacitorCordova (from `../../../node_modules/@capacitor/ios`)"
+  - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorFilesystem (from `../../node_modules/@capacitor/filesystem`)"
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
@@ -94,13 +94,13 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   Capacitor:
-    :path: "../../../node_modules/@capacitor/ios"
+    :path: "../../node_modules/@capacitor/ios"
   CapacitorApp:
     :path: "../../node_modules/@capacitor/app"
   CapacitorCamera:
     :path: "../../node_modules/@capacitor/camera"
   CapacitorCordova:
-    :path: "../../../node_modules/@capacitor/ios"
+    :path: "../../node_modules/@capacitor/ios"
   CapacitorFilesystem:
     :path: "../../node_modules/@capacitor/filesystem"
   CapacitorHaptics:
@@ -113,10 +113,10 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/status-bar"
 
 SPEC CHECKSUMS:
-  Capacitor: a162db7c9c90f383740a78e8935dff4958158b6b
+  Capacitor: b4741ca7affb32c1b70debd03df92cbf522d8a80
   CapacitorApp: efc1e9748a8ea5d3e789cd82a4f451341cc7ac93
   CapacitorCamera: 6e18d54c8ab30d7dc7b8cd93d96f9b4f57e9202a
-  CapacitorCordova: 723e017d8a80ab2ede9959fbe37556c35ac860d5
+  CapacitorCordova: 435121e81a2df4d0034f0fb11fcefab5104cfdb5
   CapacitorFilesystem: ac0a386949ed6c295a3dffa129ecd26b881ae5be
   CapacitorHaptics: 09d96bcb5a2b74ede8fd039b4cdf58fc43dcacf1
   CapacitorKeyboard: 056bbe3711830ccb782f1705a8ad183b27b6c51e
@@ -135,6 +135,6 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
 
-PODFILE CHECKSUM: 1876aca5a86c2aac2d4dab4ec89cb88fd05c77b0
+PODFILE CHECKSUM: e24f3bd8a56253eaef1d3ff3cc649a2c944c90e7
 
 COCOAPODS: 1.16.2

@@ -22,7 +22,7 @@ const Login: React.FC = () => {
       <IonHeader>
         <IonToolbar style={{ '--background': 'var(--app-header-footer-bg)', '--color': 'var(--app-header-footer-color)', '--border-width': '0' } as any}>
           <IonButtons slot="start">
-            <div className="toolbar-title">Login</div>
+            <div className="toolbar-title">Sign in</div>
           </IonButtons>
           <IonButtons slot="end">
             <IonButton aria-label="Settings">

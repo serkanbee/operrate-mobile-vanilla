@@ -88,15 +88,18 @@ const ScanQR: React.FC = () => {
           listenerRef.current?.remove().catch(() => {});
           listenerRef.current = null;
           scanningRef.current = false;
-          // Restore full UI before we show overlay and navigate to avoid header sweep
           document.body.classList.remove('barcode-scanner-active');
+          // Restore non-transparent UI before overlay/navigation to avoid Android header sweep
           setState('idle');
-        setMessage(first.rawValue || first.displayValue || '');
-        // Show dots overlay and navigate after a short delay
-        setShowDots(true);
-        window.setTimeout(() => {
-          router.push('/login', 'forward');
-        }, 1500);
+          // Ensure the toolbar re-renders with opaque background before showing overlay
+          await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+          const raw = first.rawValue || first.displayValue || '';
+          setMessage(raw);
+          // Now show white overlay and navigate
+          setShowDots(true);
+          window.setTimeout(() => {
+            router.push('/login', 'forward');
+          }, 800);
         });
         // Also listen for scan errors to gracefully recover
         await BarcodeScanner.addListener('scanError', () => {
@@ -227,7 +230,8 @@ const ScanQR: React.FC = () => {
   {state === 'idle' && (
           <div className="idle-wrap">
             <div className="idle-center">
-              <p className="helper"><strong>Have a QR code? Scan it now.</strong><br/>Alternatively, select one from your photos or manually set up your connection.</p>
+              <p className="helper-lead"><strong>Have a QR code? Scan it now.</strong></p>
+              <p className="helper">Alternatively, select one from your photos or manually set up your connection.</p>
               <div className="placeholder-card" aria-hidden="true">
                 <IonIcon className="qr-illus-icon" icon={qrCodeOutline} />
               </div>

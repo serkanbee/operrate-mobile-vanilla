@@ -1,4 +1,4 @@
-require_relative '../../../node_modules/@capacitor/ios/scripts/pods_helpers'
+require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
 
 platform :ios, '15.6'
 use_frameworks!
@@ -10,8 +10,8 @@ use_modular_headers!
 install! 'cocoapods', :disable_input_output_paths => true
 
 def capacitor_pods
-  pod 'Capacitor', :path => '../../../node_modules/@capacitor/ios'
-  pod 'CapacitorCordova', :path => '../../../node_modules/@capacitor/ios'
+  pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
+  pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorMlkitBarcodeScanning', :path => '../../node_modules/@capacitor-mlkit/barcode-scanning'
   pod 'CapacitorApp', :path => '../../node_modules/@capacitor/app'
   pod 'CapacitorCamera', :path => '../../node_modules/@capacitor/camera'
