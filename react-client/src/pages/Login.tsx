@@ -26,7 +26,11 @@ const Login: React.FC = () => {
           </IonButtons>
           <IonButtons slot="end">
             <IonButton aria-label="Settings">
-              <IonIcon slot="icon-only" icon={settingsOutline} style={{ color: 'var(--oper-rate-black)' }} />
+              <IonIcon
+                slot="icon-only"
+                icon={settingsOutline}
+                style={{ color: '#222', fontSize: '24px' }}
+              />
             </IonButton>
           </IonButtons>
         </IonToolbar>

@@ -88,9 +88,11 @@ const ScanQR: React.FC = () => {
           listenerRef.current?.remove().catch(() => {});
           listenerRef.current = null;
           scanningRef.current = false;
+          // Restore full UI before we show overlay and navigate to avoid header sweep
           document.body.classList.remove('barcode-scanner-active');
+          setState('idle');
         setMessage(first.rawValue || first.displayValue || '');
-        // Directly show white dots overlay and navigate to login
+        // Show dots overlay and navigate after a short delay
         setShowDots(true);
         window.setTimeout(() => {
           router.push('/login', 'forward');
@@ -225,7 +227,7 @@ const ScanQR: React.FC = () => {
   {state === 'idle' && (
           <div className="idle-wrap">
             <div className="idle-center">
-              <p className="helper">Have a QR code? Scan it now. Alternatively, select one from your photos or manually set up your connection.</p>
+              <p className="helper"><strong>Have a QR code? Scan it now.</strong><br/>Alternatively, select one from your photos or manually set up your connection.</p>
               <div className="placeholder-card" aria-hidden="true">
                 <IonIcon className="qr-illus-icon" icon={qrCodeOutline} />
               </div>
