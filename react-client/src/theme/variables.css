@@ -42,6 +42,49 @@ http://ionicframework.com/docs/theming/ */
 	--ion-color-danger-contrast-rgb: 255, 255, 255;
 	--ion-color-danger-shade: #cf2f2b;
 	--ion-color-danger-tint: var(--btn-danger-bg-pressed);
+
+	/*
+	 Backend web app (Operrate) design language tokens
+	 -------------------------------------------------
+	 These semantic variables mirror the colors used on your backend web app
+	 (sign-in page, side/top navigation, buttons, surfaces, and text states).
+	 We'll tune the exact hex values after reviewing the screenshot you mentioned.
+	 For now they inherit from our current palette to avoid visual regressions.
+	*/
+	/* Core brand */
+	/* Phoenix brand blue (placeholder close to Phoenix theme primary) */
+	--opweb-primary: #3874ff;
+	--opweb-primary-contrast: #ffffff;
+	--opweb-secondary: #6c757d; /* placeholder (muted gray, Bootstrap-like) */
+	--opweb-accent: #111111; /* placeholder for strong accents */
+
+	/* Surfaces */
+	--opweb-surface-page: #f5f6f8; /* page background (phoenix grey) */
+	--opweb-surface-card: #ffffff; /* card/panel background */
+	--opweb-surface-emphasis: #f5f6f8; /* subtle contrasted sections (e.g., bg-body-emphasis) */
+
+	/* Text */
+	--opweb-text: rgba(0,0,0,0.9);
+	--opweb-text-muted: rgba(0,0,0,0.56); /* like text-body-tertiary */
+	--opweb-text-highlight: #111111; /* strong headings */
+
+	/* Borders & dividers */
+	--opweb-border: rgba(0,0,0,0.08);
+	--opweb-divider: rgba(0,0,0,0.08);
+
+	/* Navigation */
+	--opweb-nav-top-bg: #ffffff;
+	--opweb-nav-top-fg: #111111;
+	--opweb-nav-side-bg: #ffffff; /* adjust to darker/lighter after palette review */
+	--opweb-nav-side-fg: #111111;
+
+	/* Buttons */
+	--opweb-btn-primary-bg: var(--opweb-primary);
+	--opweb-btn-primary-fg: var(--opweb-primary-contrast);
+	--opweb-btn-primary-hover: color-mix(in oklab, var(--opweb-primary) 88%, #000 12%);
+	--opweb-btn-secondary-bg: #ffffff;
+	--opweb-btn-secondary-fg: #111111;
+	--opweb-btn-secondary-border: var(--opweb-border);
 }
 
 /* Apply Ionic global variables so Android matches our light theme */

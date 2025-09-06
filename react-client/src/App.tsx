@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Welcome from './pages/Welcome';
 import ScanQr from './pages/ScanQr';
 import Login from './pages/Login';
+import Settings from './pages/Settings';
 
 
 /* Core CSS required for Ionic components to work properly */
@@ -73,6 +74,9 @@ const App: React.FC = () => {
         </Route>
         <Route exact path="/login">
           <Login />
+        </Route>
+        <Route exact path="/settings">
+          <Settings />
         </Route>
         <Route exact path="/"> 
           <Redirect to="/welcome" /> 
