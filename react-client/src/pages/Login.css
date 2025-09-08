@@ -1,11 +1,13 @@
-.login-content { --padding-top: 0; --padding-bottom: 0; --background: var(--opweb-surface-page); font-size: var(--app-font-size-base); }
+.login-content { --padding-top: 0; --padding-bottom: 0; --background: var(--phoenix-page-grey); font-size: var(--app-font-size-base); }
 
 /* Header title to align with other pages */
-.toolbar-title { font-size: 1rem; font-weight: 600; color: var(--opweb-text); padding-left: 8px; }
+.toolbar-title { font-size: var(--app-toolbar-title-size); font-weight: 600; color: var(--opweb-text); padding-left: 8px; }
 
 /* Shell */
-.login-shell { max-width: 440px; margin: 0 auto; padding: 84px 16px 16px; text-align: center; }
-.brand-logo { width: 56px; height: auto; margin: 16px auto 8px; display: block; }
+.login-shell { max-width: 440px; margin: 0 auto; padding: 72px 16px 16px; text-align: center; }
+/* Ensure consistent max width for inputs & primary button across pages */
+.login-shell .login-list, .login-shell .login-primary, .login-shell .field, .login-shell .login-input { max-width: 440px; margin-left: auto; margin-right: auto; }
+.brand-logo { width: 68px; height: auto; margin: 12px auto 6px; display: block; }
 .login-title { font-size: 24px; font-weight: 800; margin: 8px 0 4px; color: var(--opweb-text); }
 .login-subtitle { display: block; color: var(--opweb-text-muted); margin-bottom: 18px; }
 .login-subtitle { font-size: var(--app-font-size-base); }
@@ -14,9 +16,15 @@
 .login-list { background: transparent; }
 .login-list { background: transparent !important; padding: 0 4px; }
 .field { margin-bottom: 16px; text-align: left; }
+/* Extra top margin before first field cluster to open space below subtitle */
+.field:first-of-type { margin-top: 20px; }
 .field-label { color: var(--opweb-text-muted); font-size: 12px; font-weight: 400; letter-spacing: 0.06em; margin: 10px 8px 4px; }
-.login-input { --background: var(--opweb-surface-card); --min-height: 46px; border-radius: 8px; border: 1px solid rgba(56,116,255,0.22); --padding-start: 8px; --padding-end: 6px; --inner-padding-top: 0px; --inner-padding-bottom: 0px; }
+.login-input { --background: var(--opweb-surface-card); --min-height: 46px; border-radius: 8px; border: 1px solid var(--phoenix-border); --padding-start: 8px; --padding-end: 6px; --inner-padding-top: 0px; --inner-padding-bottom: 0px; }
 .login-input ion-input { --padding-start: 0px; --padding-end: 0px; --padding-top: 0px; --padding-bottom: 0px; }
+/* Force placeholder color on IonInput via component vars and native part */
+.login-input ion-input { --placeholder-color: var(--phoenix-placeholder) !important; --placeholder-opacity: 1; }
+.login-input ion-input::part(native)::placeholder { color: var(--phoenix-placeholder) !important; opacity: 1; }
+.login-input ion-input::part(native)::-webkit-input-placeholder { color: var(--phoenix-placeholder) !important; }
 /* Force black caret inside IonInput's shadow DOM */
 .login-input ion-input::part(native) { caret-color: #000 !important; }
 /* Fallback for any plain input (non-shadow) */
@@ -24,23 +32,23 @@
 .login-input ion-input::part(native) { caret-color: #000; }
 .login-input ion-icon { color: rgba(0,0,0,0.9); font-size: 18px; }
 .login-input ion-label { color: var(--opweb-text-muted); font-weight: 600; letter-spacing: 0.02em; }
-.login-input .toggle-btn ion-icon { color: var(--opweb-primary); font-size: 18px; }
+.login-input .toggle-btn ion-icon { color: var(--phoenix-blue); font-size: 18px; }
 .login-input .native-input, .login-input input, .login-input .sc-ion-input-md, .login-input .sc-ion-input-ios { font-size: calc(var(--app-font-size-base) - 1px); caret-color: #000; }
-.login-input input::placeholder { color: var(--opweb-text-muted); opacity: 1; }
-.login-input input::-webkit-input-placeholder { color: var(--opweb-text-muted); }
+.login-input input::placeholder { color: var(--phoenix-placeholder); opacity: 1; }
+.login-input input::-webkit-input-placeholder { color: var(--phoenix-placeholder); }
 .login-list ion-list, .login-list .list-md, .login-list .list-ios { background: transparent !important; }
 
 .login-links { display: flex; justify-content: flex-end; margin: 6px 2px 4px; }
-.forgot-link { --color: var(--opweb-primary); font-weight: 400; padding-inline-start: 0; padding-inline-end: 0; height: 24px; }
+.forgot-link { --color: var(--phoenix-blue); font-weight: 400; padding-inline-start: 0; padding-inline-end: 0; height: 24px; }
 
 /* Primary CTA */
-.login-primary { --background: var(--opweb-btn-primary-bg); --background-activated: var(--opweb-btn-primary-hover); --color: var(--opweb-btn-primary-fg); height: var(--btn-height); border-radius: 8px; --border-radius: 8px; font-weight: 400; font-size: var(--btn-font-size); max-width: 440px; margin: 10px auto 0; }
+.login-primary { --background: var(--phoenix-btn-primary-bg); --background-activated: var(--phoenix-btn-primary-hover); --color: var(--phoenix-btn-primary-fg); height: var(--btn-height); border-radius: 8px; --border-radius: 8px; font-weight: 400; font-size: var(--btn-font-size); max-width: 440px; margin: 10px auto 0; }
 
 /* Divider */
 .login-divider { margin: 14px 0; text-align: center; color: var(--opweb-text-muted); font-weight: 700; letter-spacing: 0.06em; }
 
 /* Quick login */
-.login-bottom { max-width: 480px; margin: 68px auto 0; padding: 0 16px 16px; text-align: center; }
+.login-bottom { max-width: 480px; margin: 86px auto 0; padding: 0 16px 16px; text-align: center; }
 .login-quick { margin-top: 2px; }
 .quick-row { align-items: center; text-align: center; }
 .quick-btn { --border-color: var(--opweb-btn-secondary-border); --color: var(--opweb-text); --background: var(--opweb-surface-card); --background-activated: color-mix(in oklab, var(--opweb-surface-card) 70%, #000 30%); border-radius: 8px; height: 44px; min-width: 160px; padding: 6px 20px; }
@@ -50,4 +58,4 @@
 .biometric-caption { color: var(--opweb-text-muted); font-weight: 400; margin: 18px 0 10px; letter-spacing: 0.02em; }
 .bio-center { display: flex; align-items: center; justify-content: center; }
 /* Ensure password toggle hugs the right edge inside the field */
-.login-input .toggle-btn { margin-inline-end: 0; padding-inline: 6px; min-width: 36px; height: 100%; }
+.login-input .toggle-btn { margin-inline-end: -12px; padding-inline: 18px; min-width: 46px; height: 100%; }

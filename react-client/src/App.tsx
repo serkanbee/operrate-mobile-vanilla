@@ -52,7 +52,8 @@ const App: React.FC = () => {
     (async () => {
       try {
         await StatusBar.setOverlaysWebView({ overlay: false });
-        await StatusBar.setBackgroundColor({ color: '#ffffff' });
+  // Match the unified grey background (phoenix-page-grey)
+  await StatusBar.setBackgroundColor({ color: '#f5f6f8' });
         await StatusBar.setStyle({ style: Style.Light }); // dark text for light backgrounds
         await StatusBar.show();
       } catch {}

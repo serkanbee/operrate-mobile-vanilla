@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { IonPage, IonContent, IonButton, IonIcon, useIonRouter, IonHeader, IonToolbar, IonFooter, IonButtons, useIonViewDidLeave } from '@ionic/react';
+import { IonPage, IonContent, IonButton, IonIcon, useIonRouter, IonHeader, IonToolbar, IonFooter, IonButtons, IonCard, IonCardContent, useIonViewDidLeave } from '@ionic/react';
 import type { PluginListenerHandle } from '@capacitor/core';
 import { settingsOutline, flashOutline, flashOffOutline, imagesOutline, qrCodeOutline } from 'ionicons/icons';
 import { BarcodeScanner, BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
@@ -74,6 +74,7 @@ const ScanQR: React.FC = () => {
 
   setState('scanning');
   // Make webview transparent so native camera is visible behind
+  document.documentElement.classList.add('barcode-scanner-active');
   document.body.classList.add('barcode-scanner-active');
     scanningRef.current = true;
 
@@ -88,6 +89,7 @@ const ScanQR: React.FC = () => {
           listenerRef.current?.remove().catch(() => {});
           listenerRef.current = null;
           scanningRef.current = false;
+          document.documentElement.classList.remove('barcode-scanner-active');
           document.body.classList.remove('barcode-scanner-active');
           // Restore non-transparent UI before overlay/navigation to avoid Android header sweep
           setState('idle');
@@ -105,6 +107,7 @@ const ScanQR: React.FC = () => {
         await BarcodeScanner.addListener('scanError', () => {
           scanningRef.current = false;
           setState('error');
+          document.documentElement.classList.remove('barcode-scanner-active');
           document.body.classList.remove('barcode-scanner-active');
         });
       }
@@ -135,7 +138,8 @@ const ScanQR: React.FC = () => {
 
   useIonViewDidLeave(() => {
     // Guarantee cleanup when navigating away (e.g., system back)
-    document.body.classList.remove('barcode-scanner-active');
+  document.documentElement.classList.remove('barcode-scanner-active');
+  document.body.classList.remove('barcode-scanner-active');
     cleanupScan();
     setState('idle');
     setShowDots(false);
@@ -144,7 +148,8 @@ const ScanQR: React.FC = () => {
   const stopToIdle = async () => {
     await cleanupScan();
     setState('idle');
-    document.body.classList.remove('barcode-scanner-active');
+  document.documentElement.classList.remove('barcode-scanner-active');
+  document.body.classList.remove('barcode-scanner-active');
   };
 
   const toggleTorch = async () => {
@@ -221,20 +226,24 @@ const ScanQR: React.FC = () => {
       <IonHeader>
         <IonToolbar style={{ '--background': state === 'scanning' ? 'transparent' : 'var(--app-header-footer-bg)', '--color': 'var(--app-header-footer-color)', '--border-width': '0' } as any}>
           <IonButtons slot="start">
-            <div className="toolbar-title">Scan QR code</div>
+            <div className="toolbar-title">Connect your app</div>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen className={`scanqr-content ${state === 'scanning' ? 'scanning' : ''}`} style={{ '--background': state === 'scanning' ? 'transparent' : 'var(--app-bg)' } as any}>
+  <IonContent fullscreen className={`scanqr-content ${state === 'scanning' ? 'scanning' : ''}`} style={{ '--background': state === 'scanning' ? 'transparent' : 'var(--app-bg)' } as any}>
         {/* Idle view */}
   {state === 'idle' && (
           <div className="idle-wrap">
             <div className="idle-center">
-              <p className="helper-lead"><strong>Have a QR code? Scan it now.</strong></p>
-              <p className="helper">Alternatively, select one from your photos or manually set up your connection.</p>
-              <div className="placeholder-card" aria-hidden="true">
-                <IonIcon className="qr-illus-icon" icon={qrCodeOutline} />
+              <div className="helper-block">
+                <p className="helper-lead">Have a QR code? Scan it now.</p>
+                <p className="helper">Alternatively, select one from your photos or manually set up your connection.</p>
               </div>
+              <IonCard className="qr-card" aria-hidden="true">
+                <IonCardContent className="qr-card-content">
+                  <img src="/assets/qrcode.svg" alt="QR code illustration" className="qr-svg" />
+                </IonCardContent>
+              </IonCard>
               <div className="idle-actions">
                 <div className="action-item" role="button" aria-label="Select from Photos" onClick={pickFromPhotos}>
                   <IonButton fill="clear" className="icon-btn" aria-hidden="true">
@@ -242,7 +251,7 @@ const ScanQR: React.FC = () => {
                   </IonButton>
                   <span className="action-label">Select from Photos</span>
                 </div>
-                <div className="action-item" role="button" aria-label="Manual set-up">
+                <div className="action-item" role="button" aria-label="Manual set-up" onClick={() => router.push('/settings', 'forward')}>
                   <IonButton fill="clear" className="icon-btn" aria-hidden="true">
                     <IonIcon icon={settingsOutline} />
                   </IonButton>

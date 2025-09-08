@@ -1,0 +1,12 @@
+/* Global overrides to force phoenix color scheme */
+ion-button.button-solid, ion-button[color=primary] {
+  --background: var(--phoenix-btn-primary-bg) !important;
+  --background-activated: var(--phoenix-btn-primary-hover) !important;
+  --color: var(--phoenix-btn-primary-fg) !important;
+}
+
+.start-btn, .login-primary {
+  --background: var(--phoenix-btn-primary-bg) !important;
+  --background-activated: var(--phoenix-btn-primary-hover) !important;
+  --color: var(--phoenix-btn-primary-fg) !important;
+}

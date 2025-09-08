@@ -19,10 +19,7 @@ const Login: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar style={{ '--background': 'var(--opweb-surface-page)', '--color': 'var(--opweb-text)', '--border-width': '0' } as any}>
-          <IonButtons slot="start">
-            <div className="toolbar-title">Sign in</div>
-          </IonButtons>
+        <IonToolbar style={{ '--background': 'var(--app-header-footer-bg)', '--color': 'var(--app-header-footer-color)', '--border-width': '0' } as any}>
           <IonButtons slot="end">
             <IonButton aria-label="Settings" onClick={() => history.push('/settings')}>
               <IonIcon slot="icon-only" icon={settingsOutline} style={{ color: 'var(--opweb-text)', fontSize: '22px' }} />
@@ -67,7 +64,7 @@ const Login: React.FC = () => {
 
         {/* Divider and biometrics */}
   <div className="login-bottom">
-          <div className="biometric-caption">Biometric sign-in</div>
+          <div className="biometric-caption action-label">Biometric sign-in</div>
           <div className="bio-center">
             <IonButton fill="outline" className="quick-btn bio-btn" aria-label="Sign in with biometrics">
               <IonIcon slot="icon-only" icon={fingerPrintOutline} />
@@ -75,8 +72,8 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-        <IonToast isOpen={showInitToast} message="Your server connection setup is complete" position="bottom" duration={1600} color="success" onDidDismiss={() => setShowInitToast(false)} />
-        <IonToast isOpen={showPromptToast} message="Please log in" position="bottom" duration={2200} color="success" onDidDismiss={() => setShowPromptToast(false)} />
+  <IonToast isOpen={showInitToast} message="Your server connection setup is complete" position="top" duration={1600} color="success" onDidDismiss={() => setShowInitToast(false)} />
+  <IonToast isOpen={showPromptToast} message="Please log in" position="top" duration={2200} color="success" onDidDismiss={() => setShowPromptToast(false)} />
       </IonContent>
     </IonPage>
   );

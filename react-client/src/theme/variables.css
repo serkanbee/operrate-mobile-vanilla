@@ -2,96 +2,100 @@
 http://ionicframework.com/docs/theming/ */
 
 :root {
-	--oper-rate-orange: #ff7a00;
-	--oper-rate-black: #0b0b0b;
-
-	/* App theme colors */
-	--color-primary: var(--oper-rate-orange);
-	--color-text-primary: rgba(0, 0, 0, 0.9);
-
-	/* Global button styles */
-	--btn-primary-bg: var(--oper-rate-orange);
-	/* Slightly faded orange for pressed/activated state */
-	--btn-primary-bg-pressed: #ff8f3a;
-	--btn-danger-bg: #e53935;
-	/* Slightly less bright red when pressed */
-	--btn-danger-bg-pressed: #f25551;
-	--btn-font-size: 16px;
-	--btn-height: 48px;
-	--btn-radius: 12px;
-
-	/* App base font size (match Welcome static "A smarter way…") */
-	--app-font-size-base: clamp(0.88rem, 2vw + 0.2rem, 1rem);
-
-		/* App surfaces */
-		--app-bg: #ffffff; /* Body/background color used across pages */
-		--app-header-footer-bg: var(--app-bg);
-		--app-header-footer-color: #000;
-
-	/* Map Ionic color system to brand colors */
-	--ion-color-primary: var(--oper-rate-orange);
-	--ion-color-primary-rgb: 255, 122, 0;
-	--ion-color-primary-contrast: #ffffff;
-	--ion-color-primary-contrast-rgb: 255, 255, 255;
-	--ion-color-primary-shade: #e06c00;
-	--ion-color-primary-tint: #ff8f3a;
-
-	--ion-color-danger: var(--btn-danger-bg);
-	--ion-color-danger-rgb: 229, 57, 53;
-	--ion-color-danger-contrast: #ffffff;
-	--ion-color-danger-contrast-rgb: 255, 255, 255;
-	--ion-color-danger-shade: #cf2f2b;
-	--ion-color-danger-tint: var(--btn-danger-bg-pressed);
-
-	/*
-	 Backend web app (Operrate) design language tokens
-	 -------------------------------------------------
-	 These semantic variables mirror the colors used on your backend web app
-	 (sign-in page, side/top navigation, buttons, surfaces, and text states).
-	 We'll tune the exact hex values after reviewing the screenshot you mentioned.
-	 For now they inherit from our current palette to avoid visual regressions.
-	*/
-	/* Core brand */
-	/* Phoenix brand blue (placeholder close to Phoenix theme primary) */
-	--opweb-primary: #3874ff;
-	--opweb-primary-contrast: #ffffff;
-	--opweb-secondary: #6c757d; /* placeholder (muted gray, Bootstrap-like) */
-	--opweb-accent: #111111; /* placeholder for strong accents */
-
-	/* Surfaces */
-	--opweb-surface-page: #f5f6f8; /* page background (phoenix grey) */
-	--opweb-surface-card: #ffffff; /* card/panel background */
-	--opweb-surface-emphasis: #f5f6f8; /* subtle contrasted sections (e.g., bg-body-emphasis) */
+	/* Brand (friendly names agreed: phoenix blue & phoenix page grey) */
+	--phoenix-blue: #3874ff;
+	--phoenix-blue-hover: color-mix(in oklab, var(--phoenix-blue) 88%, #000 12%);
+	--phoenix-blue-contrast: #ffffff;
+	--phoenix-page-grey: #f5f6f8;
 
 	/* Text */
-	--opweb-text: rgba(0,0,0,0.9);
-	--opweb-text-muted: rgba(0,0,0,0.56); /* like text-body-tertiary */
-	--opweb-text-highlight: #111111; /* strong headings */
+	--phoenix-text: rgba(0,0,0,0.9);
+	--phoenix-text-muted: rgba(0,0,0,0.56);
+			/* Derived placeholder (lighter version of text) */
+			--phoenix-placeholder: color-mix(in oklab, var(--phoenix-text) 32%, transparent);
 
-	/* Borders & dividers */
-	--opweb-border: rgba(0,0,0,0.08);
-	--opweb-divider: rgba(0,0,0,0.08);
-
-	/* Navigation */
-	--opweb-nav-top-bg: #ffffff;
-	--opweb-nav-top-fg: #111111;
-	--opweb-nav-side-bg: #ffffff; /* adjust to darker/lighter after palette review */
-	--opweb-nav-side-fg: #111111;
+	/* Surfaces */
+	--phoenix-surface-card: #ffffff;
+	--phoenix-border: rgba(0,0,0,0.08);
 
 	/* Buttons */
-	--opweb-btn-primary-bg: var(--opweb-primary);
-	--opweb-btn-primary-fg: var(--opweb-primary-contrast);
-	--opweb-btn-primary-hover: color-mix(in oklab, var(--opweb-primary) 88%, #000 12%);
-	--opweb-btn-secondary-bg: #ffffff;
-	--opweb-btn-secondary-fg: #111111;
-	--opweb-btn-secondary-border: var(--opweb-border);
+	--phoenix-btn-primary-bg: var(--phoenix-blue);
+	--phoenix-btn-primary-hover: var(--phoenix-blue-hover);
+	--phoenix-btn-primary-fg: var(--phoenix-blue-contrast);
+	--phoenix-btn-secondary-bg: #ffffff;
+	--phoenix-btn-secondary-fg: #111111;
+	--phoenix-btn-secondary-border: var(--phoenix-border);
+	--phoenix-btn-height: 48px;
+	--phoenix-btn-radius: 12px;
+	--phoenix-btn-font-size: 16px;
+
+	/* Danger */
+	--phoenix-danger-bg: #e53935;
+	--phoenix-danger-bg-pressed: #f25551;
+
+	/* Typography */
+	--app-toolbar-title-size: 1.15rem;
+	--app-font-size-base: clamp(0.88rem, 2vw + 0.2rem, 1rem);
+
+	/* App surfaces glue */
+	--app-bg: var(--phoenix-page-grey);
+	--app-header-footer-bg: var(--phoenix-page-grey);
+	--app-header-footer-color: var(--phoenix-text);
+
+	/* Legacy compatibility (TEMP – to delete once all refs migrated) */
+	--oper-rate-orange: #ff7a00; /* left only if other pages still use */
+	--oper-rate-black: #0b0b0b;
+	--color-primary: var(--phoenix-blue);
+	--color-text-primary: var(--phoenix-text);
+	--btn-primary-bg: var(--phoenix-btn-primary-bg);
+	--btn-primary-bg-pressed: var(--phoenix-btn-primary-hover);
+	--btn-danger-bg: var(--phoenix-danger-bg);
+	--btn-danger-bg-pressed: var(--phoenix-danger-bg-pressed);
+	--btn-font-size: var(--phoenix-btn-font-size);
+	--btn-height: var(--phoenix-btn-height);
+	--btn-radius: var(--phoenix-btn-radius);
+	--opweb-text: var(--phoenix-text);
+	--opweb-text-muted: var(--phoenix-text-muted);
+	--opweb-surface-card: var(--phoenix-surface-card);
+	--opweb-border: var(--phoenix-border);
+	--opweb-btn-secondary-border: var(--phoenix-btn-secondary-border);
 }
 
 /* Apply Ionic global variables so Android matches our light theme */
 :root, .ios, .md {
 	--ion-background-color: var(--app-bg);
-	--ion-text-color: var(--color-text-primary);
-	--ion-color-primary: var(--color-primary);
+	--ion-text-color: var(--phoenix-text);
+	--ion-color-primary: var(--phoenix-blue);
 	--ion-toolbar-background: var(--app-header-footer-bg);
 	--ion-toolbar-color: var(--app-header-footer-color);
+	--ion-color-danger: var(--phoenix-danger-bg);
+}
+
+/* Hard background enforcement to ensure pages reflect phoenix-page-grey */
+html:not(.barcode-scanner-active),
+body:not(.barcode-scanner-active),
+body:not(.barcode-scanner-active) ion-app,
+body:not(.barcode-scanner-active) ion-content,
+body:not(.barcode-scanner-active) .ion-page,
+body:not(.barcode-scanner-active) ion-page { background: var(--phoenix-page-grey) !important; }
+
+/* Global placeholder color to be a lighter version of text color */
+input::placeholder,
+textarea::placeholder,
+ion-input::part(native)::placeholder { color: var(--phoenix-placeholder); opacity: 1; }
+/* WebKit fallback */
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder { color: var(--phoenix-placeholder); }
+
+/* Ensure Ionic IonInput honors the placeholder color via exposed CSS vars */
+ion-input { --placeholder-color: var(--phoenix-placeholder); --placeholder-opacity: 1; }
+
+/* Unified primary button look (migrated from overrides.css) */
+ion-button.button-solid,
+ion-button[color=primary],
+.start-btn,
+.login-primary {
+	--background: var(--phoenix-btn-primary-bg) !important;
+	--background-activated: var(--phoenix-btn-primary-hover) !important;
+	--color: var(--phoenix-btn-primary-fg) !important;
 }
