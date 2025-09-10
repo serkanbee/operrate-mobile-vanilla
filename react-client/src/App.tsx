@@ -9,6 +9,9 @@ import Welcome from './pages/Welcome';
 import ScanQr from './pages/ScanQr';
 import Login from './pages/Login';
 import Settings from './pages/Settings';
+import ForgotPassword from './pages/ForgotPassword';
+import VerifyCode from './pages/VerifyCode';
+import ResetPassword from './pages/ResetPassword';
 
 
 /* Core CSS required for Ionic components to work properly */
@@ -75,6 +78,15 @@ const App: React.FC = () => {
         </Route>
         <Route exact path="/login">
           <Login />
+        </Route>
+        <Route exact path="/forgot-password">
+          <ForgotPassword />
+        </Route>
+        <Route exact path="/verify-code">
+          <VerifyCode />
+        </Route>
+        <Route exact path="/reset-password">
+          <ResetPassword />
         </Route>
         <Route exact path="/settings">
           <Settings />

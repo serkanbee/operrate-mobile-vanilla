@@ -1,26 +1,42 @@
 .login-content { --padding-top: 0; --padding-bottom: 0; --background: var(--phoenix-page-grey); font-size: var(--app-font-size-base); }
+/* Vertically center any page using this helper */
+.center-page { display: grid; place-items: center; min-height: 100%; }
+.vh-center { min-height: calc(100vh - 56px); display:flex; align-items:center; justify-content:center; }
 
 /* Header title to align with other pages */
 .toolbar-title { font-size: var(--app-toolbar-title-size); font-weight: 600; color: var(--opweb-text); padding-left: 8px; }
 
 /* Shell */
 .login-shell { max-width: 440px; margin: 0 auto; padding: 72px 16px 16px; text-align: center; }
+/* Reduce top padding when the shell is used in centered layouts to keep cluster truly centered */
+.center-page .login-shell { padding-top: 24px; padding-bottom: 16px; }
 /* Ensure consistent max width for inputs & primary button across pages */
-.login-shell .login-list, .login-shell .login-primary, .login-shell .field, .login-shell .login-input { max-width: 440px; margin-left: auto; margin-right: auto; }
-.brand-logo { width: 68px; height: auto; margin: 12px auto 6px; display: block; }
-.login-title { font-size: 24px; font-weight: 800; margin: 8px 0 4px; color: var(--opweb-text); }
-.login-subtitle { display: block; color: var(--opweb-text-muted); margin-bottom: 18px; }
+.login-shell .login-list, .login-shell .login-primary, .login-shell .field, .login-shell .login-input { max-width: 440px; margin-left: auto; margin-right: auto; width: 100%; }
+.login-shell form .field, .login-shell form .login-input, .login-shell form .login-primary { width: 100%; }
+.login-input { width: 100%; }
+.brand-logo { width: 68px; height: auto; margin: 8px auto 4px; display: block; }
+.login-title { font-size: 24px; font-weight: 800; margin: 8px 0 6px; color: var(--opweb-text); }
+.login-subtitle { display: block; color: var(--opweb-text-muted); margin-bottom: 16px; }
 .login-subtitle { font-size: var(--app-font-size-base); }
+/* Constrain helper width and center */
+.login-shell .login-subtitle { max-width: 420px; margin-left: auto; margin-right: auto; }
 
 /* Inputs */
 .login-list { background: transparent; }
 .login-list { background: transparent !important; padding: 0 4px; }
 .field { margin-bottom: 16px; text-align: left; }
 /* Extra top margin before first field cluster to open space below subtitle */
-.field:first-of-type { margin-top: 20px; }
+.field:first-of-type { margin-top: 18px; }
 .field-label { color: var(--opweb-text-muted); font-size: 12px; font-weight: 400; letter-spacing: 0.06em; margin: 10px 8px 4px; }
 .login-input { --background: var(--opweb-surface-card); --min-height: 46px; border-radius: 8px; border: 1px solid var(--phoenix-border); --padding-start: 8px; --padding-end: 6px; --inner-padding-top: 0px; --inner-padding-bottom: 0px; }
+.login-input:focus-within { outline: 2px solid var(--phoenix-blue-focus); outline-offset: 0; box-shadow: 0 0 0 3px color-mix(in oklab, var(--phoenix-blue-focus) 30%, transparent); border-color: var(--phoenix-blue-focus); }
 .login-input ion-input { --padding-start: 0px; --padding-end: 0px; --padding-top: 0px; --padding-bottom: 0px; }
+/* Variant without leading icon—indent content for visual alignment with labeled fields */
+.login-input.no-icon { --padding-start: 12px; }
+/* Native input highlight when focused */
+.login-input input:focus { outline: none; }
+.login-input ion-input::part(native):focus { outline: none; }
+.login-input ion-input::part(native) { box-shadow: none; }
 /* Force placeholder color on IonInput via component vars and native part */
 .login-input ion-input { --placeholder-color: var(--phoenix-placeholder) !important; --placeholder-opacity: 1; }
 .login-input ion-input::part(native)::placeholder { color: var(--phoenix-placeholder) !important; opacity: 1; }
@@ -40,6 +56,8 @@
 
 .login-links { display: flex; justify-content: flex-end; margin: 6px 2px 4px; }
 .forgot-link { --color: var(--phoenix-blue); font-weight: 400; padding-inline-start: 0; padding-inline-end: 0; height: 24px; }
+.resend-link { --color: var(--phoenix-blue); font-weight: 400; height: 24px; }
+.resend-wrap { display: flex; align-items: center; justify-content: center; gap: 4px; }
 
 /* Primary CTA */
 .login-primary { --background: var(--phoenix-btn-primary-bg); --background-activated: var(--phoenix-btn-primary-hover); --color: var(--phoenix-btn-primary-fg); height: var(--btn-height); border-radius: 8px; --border-radius: 8px; font-weight: 400; font-size: var(--btn-font-size); max-width: 440px; margin: 10px auto 0; }
@@ -52,7 +70,11 @@
 .login-quick { margin-top: 2px; }
 .quick-row { align-items: center; text-align: center; }
 .quick-btn { --border-color: var(--opweb-btn-secondary-border); --color: var(--opweb-text); --background: var(--opweb-surface-card); --background-activated: color-mix(in oklab, var(--opweb-surface-card) 70%, #000 30%); border-radius: 8px; height: 44px; min-width: 160px; padding: 6px 20px; }
-.bio-btn { border-radius: 8px; }
+.bio-btn { border-radius: 8px; height: 56px; min-width: 160px; }
+.bio-btn ion-icon { font-size: 32px; }
+
+/* Ensure forms on non-login pages have the same inner horizontal padding as the login list */
+.login-shell form { padding-left: 4px; padding-right: 4px; }
 .quick-label { margin-top: 8px; color: var(--opweb-text-muted); font-weight: 600; }
 
 .biometric-caption { color: var(--opweb-text-muted); font-weight: 400; margin: 18px 0 10px; letter-spacing: 0.02em; }

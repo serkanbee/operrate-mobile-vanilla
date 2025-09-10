@@ -5,6 +5,8 @@ http://ionicframework.com/docs/theming/ */
 	/* Brand (friendly names agreed: phoenix blue & phoenix page grey) */
 	--phoenix-blue: #3874ff;
 	--phoenix-blue-hover: color-mix(in oklab, var(--phoenix-blue) 88%, #000 12%);
+	/* Lighter focus shade for focus rings and highlights */
+	--phoenix-blue-focus: color-mix(in oklab, var(--phoenix-blue) 70%, white 30%);
 	--phoenix-blue-contrast: #ffffff;
 	--phoenix-page-grey: #f5f6f8;
 

@@ -11,9 +11,14 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setShowInitToast(true), 150);
-    const t2 = setTimeout(() => setShowPromptToast(true), 2300);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    // Show the initial success/prompt toasts only once per app session
+    const shown = sessionStorage.getItem('initToastsShown');
+    if (!shown) {
+      const t1 = setTimeout(() => setShowInitToast(true), 150);
+      const t2 = setTimeout(() => setShowPromptToast(true), 2300);
+      sessionStorage.setItem('initToastsShown', '1');
+      return () => { clearTimeout(t1); clearTimeout(t2); };
+    }
   }, []);
 
   return (
@@ -54,7 +59,7 @@ const Login: React.FC = () => {
                 </IonButton>
               </IonItem>
               <div className="login-links">
-                <IonButton fill="clear" size="small" className="forgot-link">Forgot Password?</IonButton>
+                <IonButton fill="clear" size="small" className="forgot-link" onClick={() => history.push('/forgot-password')}>Forgot Password?</IonButton>
               </div>
             </div>
           </IonList>
