@@ -1,16 +1,36 @@
 import React, { useState } from 'react';
-import { IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonContent, IonItem, IonInput, IonButton, IonText, IonIcon } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonContent, IonItem, IonInput, IonButton, IonText, IonIcon, IonToast } from '@ionic/react';
 import { settingsOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import './Login.css';
+import { requestPasswordReset } from '../api/account';
+import { log, warn } from '../utils/logger';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [errorOpen, setErrorOpen] = useState(false);
   const history = useHistory();
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    history.push('/verify-code');
+    setErrorOpen(false);
+    setErrorMsg('');
+    if (!email) { setErrorMsg('Enter email'); setErrorOpen(true); return; }
+    setSubmitting(true);
+    try {
+  const e = email.trim();
+  await requestPasswordReset(e);
+  try { sessionStorage.setItem('recoverEmail', e); } catch {}
+      log('ForgotPassword: request sent');
+      history.push('/verify-code');
+    } catch (err: any) {
+      const msg = err?.message || 'Request failed';
+      warn('ForgotPassword: failed', msg);
+      setErrorMsg(msg);
+      setErrorOpen(true);
+    } finally { setSubmitting(false); }
   };
 
   return (
@@ -44,13 +64,14 @@ const ForgotPassword: React.FC = () => {
                 />
               </IonItem>
             </div>
-            <IonButton expand="block" className="login-primary" type="submit" style={{ marginTop: 14 }}>Send</IonButton>
+            <IonButton expand="block" className="login-primary" type="submit" style={{ marginTop: 14 }} disabled={submitting}>{submitting ? 'Sending…' : 'Send'}</IonButton>
             <div style={{ textAlign: 'center', marginTop: 24 }}>
               <IonButton fill="clear" size="small" onClick={() => history.replace('/login')}>Back to Sign In</IonButton>
             </div>
           </form>
   </div>
-      </IonContent>
+  </IonContent>
+  <IonToast isOpen={errorOpen} message={errorMsg} position="top" duration={2200} color="danger" onDidDismiss={() => setErrorOpen(false)} />
     </IonPage>
   );
 };

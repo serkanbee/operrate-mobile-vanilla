@@ -8,6 +8,7 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 import { App as CapacitorApp } from '@capacitor/app';
 import './ScanQr.css';
 import FullScreenDots from '../components/FullScreenDots';
+import { setApiBaseUrl } from '../api/httpClient';
 
 type ViewState = 'idle' | 'scanning' | 'blocked' | 'error';
 
@@ -97,6 +98,13 @@ const ScanQR: React.FC = () => {
           await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
           const raw = first.rawValue || first.displayValue || '';
           setMessage(raw);
+          // If QR contains a URL, persist it immediately
+          try {
+            const maybeUrl = raw.trim();
+            if (/^https?:\/\//i.test(maybeUrl)) {
+              setApiBaseUrl(maybeUrl.replace(/\/$/, ''));
+            }
+          } catch {}
           // Now show white overlay and navigate
           setShowDots(true);
           window.setTimeout(() => {
@@ -206,7 +214,14 @@ const ScanQR: React.FC = () => {
       });
       const first = result?.barcodes?.[0];
       if (first) {
-        setMessage(first.rawValue || first.displayValue || '');
+        const raw = first.rawValue || first.displayValue || '';
+        setMessage(raw);
+        try {
+          const maybeUrl = raw.trim();
+          if (/^https?:\/\//i.test(maybeUrl)) {
+            setApiBaseUrl(maybeUrl.replace(/\/$/, ''));
+          }
+        } catch {}
         setShowDots(true);
         window.setTimeout(() => {
           router.push('/login', 'forward');
@@ -317,3 +332,9 @@ const ScanQR: React.FC = () => {
 };
 
 export default ScanQR;
+
+// Settings bottom sheet modal
+// Place after export default to keep component body clean
+// This will render within the same React tree
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _SettingsSheetPortal: React.FC = () => null;

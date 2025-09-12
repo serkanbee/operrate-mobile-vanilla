@@ -1,18 +1,42 @@
-import React, { useState } from 'react';
-import { IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonContent, IonText, IonButton, IonIcon } from '@ionic/react';
+import React, { useEffect, useState } from 'react';
+import { IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonContent, IonText, IonButton, IonIcon, IonToast } from '@ionic/react';
 import { settingsOutline } from 'ionicons/icons';
 // Use the official Ionic OTP input component
 import { IonInputOtp } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import './Login.css';
+import { verifyEmail } from '../api/account';
+import { log, warn } from '../utils/logger';
 
 const VerifyCode: React.FC = () => {
   const history = useHistory();
   const [code, setCode] = useState('');
+  const [email, setEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [errorOpen, setErrorOpen] = useState(false);
 
-  const onSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    try { setEmail(sessionStorage.getItem('recoverEmail') || ''); } catch {}
+  }, []);
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    history.push('/reset-password');
+    setErrorOpen(false);
+    setErrorMsg('');
+    if (!email || !code) { setErrorMsg('Enter code'); setErrorOpen(true); return; }
+    setSubmitting(true);
+    try {
+  await verifyEmail(email, code);
+  try { sessionStorage.setItem('recoverCode', code); } catch {}
+      log('VerifyCode: code accepted');
+      history.push('/reset-password');
+    } catch (err: any) {
+      const msg = err?.message || 'Verification failed';
+      warn('VerifyCode: failed', msg);
+      setErrorMsg(msg);
+      setErrorOpen(true);
+    } finally { setSubmitting(false); }
   };
 
   return (
@@ -53,7 +77,7 @@ const VerifyCode: React.FC = () => {
                 } as any}
               />
             </div>
-            <IonButton expand="block" className="login-primary" type="submit">Verify</IonButton>
+            <IonButton expand="block" className="login-primary" type="submit" disabled={submitting}>{submitting ? 'Verifying…' : 'Verify'}</IonButton>
             <div className="resend-wrap" style={{ marginTop: 12 }}>
               <IonText className="resend-helper" style={{ textAlign: 'center' }}>
                 Didn’t get a code? <span style={{ textDecoration: 'underline', color: 'var(--phoenix-blue)' }}>Resend the code</span>
@@ -64,7 +88,8 @@ const VerifyCode: React.FC = () => {
             </div>
           </form>
   </div>
-      </IonContent>
+  </IonContent>
+  <IonToast isOpen={errorOpen} message={errorMsg} position="top" duration={2200} color="danger" onDidDismiss={() => setErrorOpen(false)} />
     </IonPage>
   );
 };

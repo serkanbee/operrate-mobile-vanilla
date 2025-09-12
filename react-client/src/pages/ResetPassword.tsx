@@ -1,8 +1,10 @@
-import React, { useMemo, useState } from 'react';
-import { IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonContent, IonItem, IonInput, IonButton, IonText, IonIcon } from '@ionic/react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonContent, IonItem, IonInput, IonButton, IonText, IonIcon, IonToast } from '@ionic/react';
 import { settingsOutline, eye, eyeOff } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import './Login.css';
+import { resetPassword as apiResetPassword } from '../api/account';
+import { log, warn } from '../utils/logger';
 
 const ResetPassword: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -10,6 +12,18 @@ const ResetPassword: React.FC = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const history = useHistory();
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [errorOpen, setErrorOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      setEmail(sessionStorage.getItem('recoverEmail') || '');
+      setCode(sessionStorage.getItem('recoverCode') || '');
+    } catch {}
+  }, []);
 
   // Password strength calculation similar to the web EJS implementation
   const { strengthPct, strengthText, strengthColor } = useMemo(() => {
@@ -47,9 +61,23 @@ const ResetPassword: React.FC = () => {
     confirmPassword.length > 0 ? newPassword === confirmPassword : null
   ), [newPassword, confirmPassword]);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // UI only for now
+    setErrorOpen(false);
+    setErrorMsg('');
+    if (!email || !code || !newPassword || !confirmPassword) { setErrorMsg('Fill all fields'); setErrorOpen(true); return; }
+    if (newPassword !== confirmPassword) { setErrorMsg('Passwords do not match'); setErrorOpen(true); return; }
+    setSubmitting(true);
+    try {
+      await apiResetPassword(email, code, newPassword);
+      log('ResetPassword: success');
+      history.replace('/login');
+    } catch (err: any) {
+      const msg = err?.message || 'Reset failed';
+      warn('ResetPassword: failed', msg);
+      setErrorMsg(msg);
+      setErrorOpen(true);
+    } finally { setSubmitting(false); }
   };
 
   return (
@@ -115,13 +143,15 @@ const ResetPassword: React.FC = () => {
                 </div>
               )}
             </div>
-            <IonButton expand="block" className="login-primary" type="submit" style={{ marginTop: 14 }}>Reset password</IonButton>
+            <IonButton expand="block" className="login-primary" type="submit" style={{ marginTop: 14 }} disabled={submitting}>{submitting ? 'Resetting…' : 'Reset password'}</IonButton>
             <div style={{ textAlign: 'center', marginTop: 24 }}>
               <IonButton fill="clear" size="small" onClick={() => history.replace('/login')}>Back to Sign In</IonButton>
             </div>
           </form>
   </div>
       </IonContent>
+  {/* Error toast */}
+  <IonToast isOpen={errorOpen} message={errorMsg} position="top" duration={2200} color="danger" onDidDismiss={() => setErrorOpen(false)} />
     </IonPage>
   );
 };
