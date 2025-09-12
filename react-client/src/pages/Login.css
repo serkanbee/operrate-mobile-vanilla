@@ -21,6 +21,11 @@
 /* Constrain helper width and center */
 .login-shell .login-subtitle { max-width: 420px; margin-left: auto; margin-right: auto; }
 
+/* Inline alert matching web flash placement */
+.inline-alert { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #fdecea; color: #611a15; border: 1px solid #f5c6cb; border-radius: 8px; padding: 10px 12px; margin: 10px auto 0; max-width: 440px; }
+.inline-alert .msg { flex: 1; font-size: calc(var(--app-font-size-base) - 1px); }
+.inline-alert .close-btn { background: transparent; border: none; color: inherit; font-size: 18px; line-height: 1; padding: 0 6px; cursor: pointer; }
+
 /* Inputs */
 .login-list { background: transparent; }
 .login-list { background: transparent !important; padding: 0 4px; }

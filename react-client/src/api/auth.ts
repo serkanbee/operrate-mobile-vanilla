@@ -6,6 +6,15 @@ import { log, warn } from '../utils/logger';
 export async function login(email: string, password: string) {
   // Gather device info (best-effort)
   let deviceInfo: any = {};
+  // Derive a simple device name similar to httpClient
+  const deviceName = (() => {
+    try {
+      const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+      if (ua.includes('iPhone') || ua.includes('iPad')) return 'iOS App';
+      if (ua.includes('Android')) return 'Android App';
+      return 'Mobile App';
+    } catch { return 'Mobile App'; }
+  })();
   try {
     // @vite-ignore keeps it optional for bundlers
     const mod: any = await import(/* @vite-ignore */ '@capacitor/device');
@@ -15,25 +24,71 @@ export async function login(email: string, password: string) {
     }
   } catch {}
   // v2-only: use versionless token endpoint
-  const res = await httpFetch('/api/auth/token/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
-      email,
-      password,
-      deviceId: (localStorage.getItem('deviceId') || null),
-      deviceName: 'Mobile App',
-      device: {
-        platform: deviceInfo?.platform || undefined,
-        operatingSystem: deviceInfo?.operatingSystem || undefined,
-        osVersion: deviceInfo?.osVersion || undefined,
-        model: deviceInfo?.model || undefined,
-        manufacturer: deviceInfo?.manufacturer || undefined,
-        isVirtual: deviceInfo?.isVirtual ?? undefined
+  let res: Response;
+  try {
+    res = await httpFetch('/api/auth/token/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'x-no-forced-logout': '1' },
+      body: JSON.stringify({
+        email,
+        password,
+        deviceId: (localStorage.getItem('deviceId') || null),
+        deviceName,
+        device: {
+          platform: deviceInfo?.platform || undefined,
+          operatingSystem: deviceInfo?.operatingSystem || undefined,
+          osVersion: deviceInfo?.osVersion || undefined,
+          model: deviceInfo?.model || undefined,
+          manufacturer: deviceInfo?.manufacturer || undefined,
+          isVirtual: deviceInfo?.isVirtual ?? undefined
+        }
+      })
+    }, false);
+  } catch (err: any) {
+    const em = String(err?.message || err || 'Login failed');
+    // Surface clearer guidance for base URL or network issues
+    if (em.includes('API base URL is not set')) throw new Error(em);
+    throw new Error('Cannot reach the server. Check API Base URL in Settings and your connection.');
+  }
+  if (!res.ok) {
+    const status = res.status;
+    const ct = res.headers.get('content-type') || '';
+    // Handle 403 first: prefer to surface blocked-account inline
+    if (status === 403) {
+      // Try JSON (don't swallow thrown errors)
+      if (ct.includes('application/json')) {
+        const data = await res.clone().json().catch(() => undefined as any);
+        if (data) {
+          const msg = data?.message || 'Your account has been blocked. Please contact your administrator.';
+          if (data?.code === 'ACCOUNT_BLOCKED' || /blocked/i.test(String(msg))) {
+            const err: any = new Error(msg);
+            err.code = 'ACCOUNT_BLOCKED';
+            throw err;
+          }
+          throw new Error(msg);
+        }
       }
-    })
-  }, false);
-  if (!res.ok) throw new Error(`Login failed (${res.status})`);
+      // Fallback: text/html
+      try {
+        const t = await res.clone().text();
+        if (/account\s+has\s+been\s+blocked/i.test(t)) {
+          const err: any = new Error('Your account has been blocked. Please contact your administrator.');
+          err.code = 'ACCOUNT_BLOCKED';
+          throw err;
+        }
+      } catch {}
+      throw new Error('Login failed (403)');
+    }
+
+    // Non-403 errors
+    if (ct.includes('application/json')) {
+      try {
+        const data = await res.clone().json();
+        throw new Error(data?.message || `Login failed (${status})`);
+      } catch {}
+    }
+    throw new Error(`Login failed (${status})`);
+  }
   const ct = res.headers.get('content-type') || '';
   if (!ct.includes('application/json')) {
     throw new Error('Unexpected response (not JSON). Check API Base URL in Settings or dev proxy config.');

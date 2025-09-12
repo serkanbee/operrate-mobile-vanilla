@@ -1,5 +1,5 @@
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import { IonApp, IonRouterOutlet, IonToast, setupIonicReact } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { IonReactRouter } from '@ionic/react-router';
@@ -49,6 +49,23 @@ import './theme/overlays.css';
 // Force a consistent UI across iOS and Android
 setupIonicReact({ mode: 'ios' });
 
+// Private route guard to block access when not authenticated
+const PrivateRoute: React.FC<{ path: string; exact?: boolean; children: React.ReactNode }> = ({ path, exact, children }) => {
+  const { user, loading } = useAuth();
+  if (loading) {
+    // Hold route decision until auth bootstrap completes
+    return null;
+  }
+  if (!user) {
+    return <Redirect to="/login" />;
+  }
+  return (
+    <Route exact={!!exact} path={path}>
+      {children}
+    </Route>
+  );
+};
+
 const App: React.FC = () => {
   const [forcedToast, setForcedToast] = useState<{ open: boolean; msg: string }>(() => ({ open: false, msg: '' }));
   useEffect(() => {
@@ -69,14 +86,15 @@ const App: React.FC = () => {
       <IonReactRouter>
   <RouteTracker />
   <ForcedLogoutListener onToast={(m)=>setForcedToast({ open: true, msg: m })} />
+  <AuthStateGuard />
         <RootGate />
         <IonRouterOutlet>
 
         {/* ✅ Root is now Welcome */}
         {/* <Route exact path="/" component={Home} /> */}
-        <Route exact path="/home">
+        <PrivateRoute exact path="/home">
           <Home />
-        </Route>
+        </PrivateRoute>
         <Route exact path="/scan-qr">
           <ScanQr />
         </Route>
@@ -110,15 +128,7 @@ const App: React.FC = () => {
         {/* <Redirect exact from="*" to="/" /> */}
         </IonRouterOutlet>
       </IonReactRouter>
-      {/* Minimal global toast for forced logout reasons */}
-      <div style={{ position: 'fixed', top: 10, left: 0, right: 0, textAlign: 'center', pointerEvents: 'none' }}>
-        {forcedToast.open && (
-          <div style={{ display: 'inline-block', background: '#e74c3c', color: '#fff', padding: '8px 12px', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-               onAnimationEnd={() => setForcedToast({ open: false, msg: '' })}>
-            {forcedToast.msg}
-          </div>
-        )}
-      </div>
+  <IonToast isOpen={forcedToast.open} message={forcedToast.msg} duration={2200} color="danger" position="top" onDidDismiss={()=>setForcedToast({ open: false, msg: '' })} />
     </IonApp>
   );
 };
@@ -176,7 +186,7 @@ const RootGate: React.FC = () => {
     (async () => {
       try {
         const hasSeen = localStorage.getItem('hasSeenWelcome');
-        const { accessToken } = await tokens.get();
+  const { accessToken, refreshToken } = await tokens.get();
         const last = localStorage.getItem('lastRoute') || '';
         if (!hasSeen) {
           localStorage.setItem('hasSeenWelcome', '1');
@@ -184,13 +194,17 @@ const RootGate: React.FC = () => {
           setBooted(true);
           return;
         }
-        // If user has token, prefer last route (not Welcome); else go to /login
-        if (accessToken) {
+  // If user has access or refresh token, prefer last route (not Welcome); else stay on public routes
+  if (accessToken || refreshToken) {
           const disallowed = new Set(['/', '/welcome', '/login']);
           if (last && !disallowed.has(last)) history.replace(last);
           else history.replace('/home');
         } else {
-          if (history.location.pathname === '/' || history.location.pathname === '/welcome') history.replace('/login');
+          // After first-run, unauthenticated default should be /login (not Welcome)
+          const path = history.location.pathname;
+          if (path === '/' || path === '/welcome') {
+            history.replace('/login');
+          }
         }
       } catch {}
       setBooted(true);
@@ -208,12 +222,29 @@ const ForcedLogoutListener: React.FC<{ onToast?: (msg: string) => void }> = ({ o
       try {
         await auth.logout();
         await tokens.clear();
+        try { localStorage.removeItem('lastRoute'); } catch {}
       } catch {}
-      const msg = e.reason === 'blocked' ? (e.message || 'Your account has been blocked.') : (e.message || 'You have been signed out.');
+  const msg = e.reason === 'blocked' ? (e.message || 'Your account has been blocked.') : (e.message || 'Your session has expired. Please sign in again.');
       if (onToast) onToast(msg);
       if (history.location.pathname !== '/login') history.replace('/login');
     });
     return () => unsub();
   }, [auth, history, onToast]);
+  return null;
+};
+
+// Redirect to /login if user becomes unauthenticated on any protected route
+const AuthStateGuard: React.FC = () => {
+  const history = useHistory();
+  const { user, loading } = useAuth();
+  useEffect(() => {
+    // Avoid redirecting until initial auth check completes
+    if (loading) return;
+    const publicPaths = new Set<string>(['/login', '/welcome', '/scan-qr', '/settings', '/forgot-password', '/verify-code', '/reset-password']);
+    const path = history.location.pathname;
+    if (!user && !publicPaths.has(path)) {
+      history.replace('/login');
+    }
+  }, [user, loading, history]);
   return null;
 };

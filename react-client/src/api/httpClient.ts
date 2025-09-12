@@ -112,13 +112,24 @@ async function refreshAccessToken(): Promise<boolean> {
 }
 
 export async function httpFetch(input: string, init: RequestInit = {}, retry = true): Promise<Response> {
+  const suppressFL = ((): boolean => {
+    try {
+      const h = (init && (init as any).headers) as any;
+      if (!h) return false;
+      if (h instanceof Headers) return h.get('x-no-forced-logout') === '1' || h.get('x-no-forced-logout') === 'true';
+      const v = h['x-no-forced-logout'];
+      return v === '1' || v === true || v === 'true';
+    } catch { return false; }
+  })();
   if (!input.startsWith('http') && !API_BASE_URL) {
     const msg = 'API base URL is not set. Go to Settings and set API Base URL.';
     warn('httpFetch: blocked relative request because base URL is empty', input);
     throw new Error(msg);
   }
   const url = input.startsWith('http') ? input : `${API_BASE_URL}${input}`;
-  const { accessToken } = await tokenStore.get();
+  const { accessToken, refreshToken } = await tokenStore.get();
+  const hadAccess = !!accessToken;
+  const hadRefresh = !!refreshToken;
   const headers: HeadersInit = {
     'x-capacitor': '1',
   'x-device-id': DEVICE_ID || '',
@@ -135,22 +146,37 @@ export async function httpFetch(input: string, init: RequestInit = {}, retry = t
       if (ct.includes('application/json')) {
         const data = await res.clone().json();
         if (data?.code === 'ACCOUNT_BLOCKED') {
-          emitForcedLogout({ reason: 'blocked', code: data.code, message: data.message || 'Your account has been blocked.' });
+          if (!suppressFL) emitForcedLogout({ reason: 'blocked', code: data.code, message: data.message || 'Your account has been blocked.' });
         }
       }
     } catch {}
     return res;
   }
-  if (res.status !== 401 || !retry) return res;
+  if (res.status !== 401) return res;
+  if (!retry) {
+    // Only fire forced logout if we thought we were authenticated
+    if ((hadAccess || hadRefresh) && !suppressFL) {
+      emitForcedLogout({ reason: 'unauthorized', message: 'Your session has expired. Please sign in again.' });
+    }
+    return res;
+  }
   // try refresh once
   const ok = await refreshAccessToken();
-  if (!ok) return res; // let caller handle 401
+  if (!ok) {
+    // No refresh available or failed — force logout only if we had tokens
+    if ((hadAccess || hadRefresh) && !suppressFL) {
+      emitForcedLogout({ reason: 'unauthorized', message: 'Your session has expired. Please sign in again.' });
+    }
+    return res;
+  }
   const { accessToken: newAccess } = await tokenStore.get();
   const retryHeaders: HeadersInit = { 'x-capacitor': '1', 'x-device-id': DEVICE_ID || '', 'x-device-name': DEVICE_NAME, ...(init.headers || {}), ...(newAccess ? { Authorization: `Bearer ${newAccess}` } : {}) };
   log('httpFetch retry after refresh', { url, hadNewAccess: !!newAccess });
   const retryRes = await fetch(url, { ...init, headers: retryHeaders });
   if (retryRes.status === 401) {
-    emitForcedLogout({ reason: 'unauthorized', message: 'Your session has expired. Please sign in again.' });
+    if ((hadAccess || hadRefresh) && !suppressFL) {
+      emitForcedLogout({ reason: 'unauthorized', message: 'Your session has expired. Please sign in again.' });
+    }
   }
   return retryRes;
 }

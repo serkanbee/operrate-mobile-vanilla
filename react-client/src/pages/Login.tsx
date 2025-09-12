@@ -14,24 +14,35 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState(''); // inline message for ACCOUNT_BLOCKED specifically
   const [errorOpen, setErrorOpen] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false); // generic login failed toast
+  const [blockedMsg, setBlockedMsg] = useState(''); // preserve last blocked message
   const auth = useAuth();
 
   useEffect(() => {
-    // Show the initial success/prompt toasts only once per app session
-    const shown = sessionStorage.getItem('initToastsShown');
-    if (!shown) {
-      const t1 = setTimeout(() => setShowInitToast(true), 150);
-      const t2 = setTimeout(() => setShowPromptToast(true), 2300);
-      sessionStorage.setItem('initToastsShown', '1');
-      return () => { clearTimeout(t1); clearTimeout(t2); };
+    // Show welcome toasts only when explicitly requested (e.g., after QR/setup) and fresh
+    const raw = localStorage.getItem('showLoginWelcomeToasts');
+    if (raw) {
+      try {
+        const obj = JSON.parse(raw);
+        const ts = Number(obj?.ts || 0);
+        const fresh = ts && (Date.now() - ts) < 2 * 60 * 1000; // 2 minutes
+        if (obj?.v === 1 && fresh) {
+          const t1 = setTimeout(() => setShowInitToast(true), 150);
+          const t2 = setTimeout(() => setShowPromptToast(true), 2300);
+          localStorage.removeItem('showLoginWelcomeToasts');
+          return () => { clearTimeout(t1); clearTimeout(t2); };
+        }
+      } catch {}
+      // Stale or malformed — clean up
+      localStorage.removeItem('showLoginWelcomeToasts');
     }
   }, []);
 
   const onSignIn = async () => {
-    setErrorOpen(false);
-    setErrorMsg('');
+  setErrorOpen(false);
+  setErrorMsg('');
     if (!email || !password) {
       setErrorMsg('Enter email and password');
       setErrorOpen(true);
@@ -45,8 +56,15 @@ const Login: React.FC = () => {
     } catch (e: any) {
       const msg = e?.message || 'Sign in failed';
       warn('Login: failed', msg);
-      setErrorMsg(msg);
-      setErrorOpen(true);
+      // If server said blocked, show inline; otherwise show toast
+      if (e?.code === 'ACCOUNT_BLOCKED' || /blocked/i.test(msg)) {
+        const m = msg || 'Your account has been blocked. Please contact your administrator.';
+        setBlockedMsg(m);
+        setErrorMsg(m);
+        setErrorOpen(true);
+      } else {
+        setToastOpen(true);
+      }
     } finally { setSubmitting(false); }
   };
 
@@ -69,6 +87,12 @@ const Login: React.FC = () => {
 
           <h2 className="login-title">Sign In</h2>
           <IonText className="login-subtitle">Get access to your account</IonText>
+      {errorOpen && (
+            <div className="inline-alert" role="alert">
+        <span className="msg">{blockedMsg || errorMsg}</span>
+              <button className="close-btn" aria-label="Close" onClick={() => setErrorOpen(false)}>×</button>
+            </div>
+          )}
 
           <IonList className="login-list">
             <div className="field">
@@ -108,7 +132,7 @@ const Login: React.FC = () => {
 
   <IonToast isOpen={showInitToast} message="Your server connection is ready" position="top" duration={1600} color="success" onDidDismiss={() => setShowInitToast(false)} />
   <IonToast isOpen={showPromptToast} message="Please sign in" position="top" duration={2200} color="success" onDidDismiss={() => setShowPromptToast(false)} />
-  <IonToast isOpen={errorOpen} message={errorMsg} position="top" duration={2200} color="danger" onDidDismiss={()=>setErrorOpen(false)} />
+  <IonToast isOpen={toastOpen} message="Login failed" position="top" duration={2000} color="danger" onDidDismiss={()=>setToastOpen(false)} />
       </IonContent>
     </IonPage>
   );

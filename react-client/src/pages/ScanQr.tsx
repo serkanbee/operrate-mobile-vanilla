@@ -106,6 +106,7 @@ const ScanQR: React.FC = () => {
             }
           } catch {}
           // Now show white overlay and navigate
+          try { localStorage.setItem('showLoginWelcomeToasts', JSON.stringify({ v: 1, ts: Date.now() })); } catch {}
           setShowDots(true);
           window.setTimeout(() => {
             router.push('/login', 'forward');
@@ -222,7 +223,8 @@ const ScanQR: React.FC = () => {
             setApiBaseUrl(maybeUrl.replace(/\/$/, ''));
           }
         } catch {}
-        setShowDots(true);
+  try { localStorage.setItem('showLoginWelcomeToasts', JSON.stringify({ v: 1, ts: Date.now() })); } catch {}
+  setShowDots(true);
         window.setTimeout(() => {
           router.push('/login', 'forward');
         }, 1500);
