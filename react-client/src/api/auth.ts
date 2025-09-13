@@ -106,22 +106,21 @@ export async function login(email: string, password: string) {
 }
 
 export async function logout() {
-  const { refreshToken } = await tokens.get();
   try {
-    // v2-only logout: revoke refresh session server-side
-    await httpFetch('/api/auth/token/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        ...(refreshToken ? { 'x-refresh-token': refreshToken } : {})
-      },
-      body: JSON.stringify({ refreshToken })
-    }, false);
-    log('auth.logout posted to server (token/logout)');
+    const { refreshToken } = await tokens.get();
+    if (refreshToken) {
+      await httpFetch('/api/auth/token/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken })
+      }, false);
+      log('auth.logout posted to server (token/logout)');
+    }
   } catch (e) {
     warn('auth.logout server call failed', e);
   }
   await tokens.clear();
+  // Ensure any pending post-login toast (e.g., from password reset) cannot leak after logout
+  try { localStorage.removeItem('postLoginToast'); } catch {}
   log('auth.logout cleared tokens');
 }

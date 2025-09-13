@@ -63,6 +63,8 @@
 .forgot-link { --color: var(--phoenix-blue); font-weight: 400; padding-inline-start: 0; padding-inline-end: 0; height: 24px; }
 .resend-link { --color: var(--phoenix-blue); font-weight: 400; height: 24px; }
 .resend-wrap { display: flex; align-items: center; justify-content: center; gap: 4px; }
+/* Theme grey countdown */
+.resend-link[disabled], .resend-link.cooldown { color: var(--opweb-text-muted) !important; --color: var(--opweb-text-muted) !important; }
 
 /* Primary CTA */
 .login-primary { --background: var(--phoenix-btn-primary-bg); --background-activated: var(--phoenix-btn-primary-hover); --color: var(--phoenix-btn-primary-fg); height: var(--btn-height); border-radius: 8px; --border-radius: 8px; font-weight: 400; font-size: var(--btn-font-size); max-width: 440px; margin: 10px auto 0; }

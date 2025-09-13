@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { IonPage, IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonToast, IonList, IonItem, IonInput, IonText } from '@ionic/react';
+import React, { useEffect, useRef, useState } from 'react';
+import { IonPage, IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonToast, IonList, IonItem, IonInput, IonText, useIonViewDidLeave, useIonViewWillEnter } from '@ionic/react';
 import { settingsOutline, person, key, eye, eyeOff, fingerPrintOutline } from 'ionicons/icons';
 import './Login.css';
 import { useHistory } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { log, warn } from '../utils/logger';
 const Login: React.FC = () => {
   const [showInitToast, setShowInitToast] = useState(false);
   const [showPromptToast, setShowPromptToast] = useState(false);
+  const [postToast, setPostToast] = useState<string>('');
   const history = useHistory();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -16,12 +17,27 @@ const Login: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState(''); // inline message for ACCOUNT_BLOCKED specifically
   const [errorOpen, setErrorOpen] = useState(false);
-  const [toastOpen, setToastOpen] = useState(false); // generic login failed toast
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastText, setToastText] = useState('Login failed');
   const [blockedMsg, setBlockedMsg] = useState(''); // preserve last blocked message
   const auth = useAuth();
+  // Track timers across view entries for cleanup
+  const t1Ref = useRef<any>(null);
+  const t2Ref = useRef<any>(null);
 
-  useEffect(() => {
-    // Show welcome toasts only when explicitly requested (e.g., after QR/setup) and fresh
+  // Run every time this view becomes active (Ionic keeps pages mounted)
+  useIonViewWillEnter(() => {
+    // Always consume post-reset toast first so it doesn't leak into later visits/logouts
+    try {
+      const raw2 = localStorage.getItem('postLoginToast');
+      if (raw2) {
+        const obj = JSON.parse(raw2);
+        if (obj?.v === 1 && obj?.msg) setPostToast(obj.msg);
+        localStorage.removeItem('postLoginToast');
+      }
+    } catch {}
+
+    // Then schedule welcome toasts if requested and fresh
     const raw = localStorage.getItem('showLoginWelcomeToasts');
     if (raw) {
       try {
@@ -29,16 +45,20 @@ const Login: React.FC = () => {
         const ts = Number(obj?.ts || 0);
         const fresh = ts && (Date.now() - ts) < 2 * 60 * 1000; // 2 minutes
         if (obj?.v === 1 && fresh) {
-          const t1 = setTimeout(() => setShowInitToast(true), 150);
-          const t2 = setTimeout(() => setShowPromptToast(true), 2300);
-          localStorage.removeItem('showLoginWelcomeToasts');
-          return () => { clearTimeout(t1); clearTimeout(t2); };
+          t1Ref.current = setTimeout(() => setShowInitToast(true), 150);
+          t2Ref.current = setTimeout(() => setShowPromptToast(true), 2300);
         }
       } catch {}
-      // Stale or malformed — clean up
+      // Clean up the flag regardless (stale or used)
       localStorage.removeItem('showLoginWelcomeToasts');
     }
-  }, []);
+  });
+
+  // Clear any pending timers when leaving this view
+  useIonViewDidLeave(() => {
+    if (t1Ref.current) { clearTimeout(t1Ref.current); t1Ref.current = null; }
+    if (t2Ref.current) { clearTimeout(t2Ref.current); t2Ref.current = null; }
+  });
 
   const onSignIn = async () => {
   setErrorOpen(false);
@@ -63,6 +83,12 @@ const Login: React.FC = () => {
         setErrorMsg(m);
         setErrorOpen(true);
       } else {
+        // Show specific copy for invalid credentials
+        if (/invalid\s+email\s+or\s+password/i.test(msg) || /\(401\)/.test(msg)) {
+          setToastText('Incorrect email address or password');
+        } else {
+          setToastText('Login failed');
+        }
         setToastOpen(true);
       }
     } finally { setSubmitting(false); }
@@ -132,7 +158,8 @@ const Login: React.FC = () => {
 
   <IonToast isOpen={showInitToast} message="Your server connection is ready" position="top" duration={1600} color="success" onDidDismiss={() => setShowInitToast(false)} />
   <IonToast isOpen={showPromptToast} message="Please sign in" position="top" duration={2200} color="success" onDidDismiss={() => setShowPromptToast(false)} />
-  <IonToast isOpen={toastOpen} message="Login failed" position="top" duration={2000} color="danger" onDidDismiss={()=>setToastOpen(false)} />
+  <IonToast isOpen={!!postToast} message={postToast} position="top" duration={2200} color="success" onDidDismiss={()=>setPostToast('')} />
+  <IonToast isOpen={toastOpen} message={toastText} position="top" duration={2000} color="danger" onDidDismiss={()=>setToastOpen(false)} />
       </IonContent>
     </IonPage>
   );

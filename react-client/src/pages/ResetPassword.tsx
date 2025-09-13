@@ -20,7 +20,8 @@ const ResetPassword: React.FC = () => {
 
   useEffect(() => {
     try {
-      setEmail(sessionStorage.getItem('recoverEmail') || '');
+  const q = new URLSearchParams(window.location.search).get('email') || '';
+  setEmail(q || sessionStorage.getItem('recoverEmail') || '');
       setCode(sessionStorage.getItem('recoverCode') || '');
     } catch {}
   }, []);
@@ -67,10 +68,12 @@ const ResetPassword: React.FC = () => {
     setErrorMsg('');
     if (!email || !code || !newPassword || !confirmPassword) { setErrorMsg('Fill all fields'); setErrorOpen(true); return; }
     if (newPassword !== confirmPassword) { setErrorMsg('Passwords do not match'); setErrorOpen(true); return; }
+    if (newPassword.length < 8) { setErrorMsg('Password must be at least 8 characters'); setErrorOpen(true); return; }
     setSubmitting(true);
     try {
       await apiResetPassword(email, code, newPassword);
       log('ResetPassword: success');
+      try { localStorage.setItem('postLoginToast', JSON.stringify({ v: 1, msg: 'Password reset successful. Please sign in.' })); } catch {}
       history.replace('/login');
     } catch (err: any) {
       const msg = err?.message || 'Reset failed';

@@ -2,7 +2,7 @@ import { httpFetch } from './httpClient';
 import { log } from '../utils/logger';
 
 export async function requestPasswordReset(email: string) {
-  const res = await httpFetch('/auth/forgot-password', {
+  const res = await httpFetch('/api/auth/forgot-password', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email })
@@ -14,7 +14,7 @@ export async function requestPasswordReset(email: string) {
 }
 
 export async function verifyEmail(email: string, code: string) {
-  const res = await httpFetch('/auth/verify-email', {
+  const res = await httpFetch('/api/auth/verify-email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, code })
@@ -26,7 +26,7 @@ export async function verifyEmail(email: string, code: string) {
 }
 
 export async function resendVerification(email: string) {
-  const res = await httpFetch('/auth/resend-verification', {
+  const res = await httpFetch('/api/auth/resend-verification', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email })
@@ -38,7 +38,7 @@ export async function resendVerification(email: string) {
 }
 
 export async function resetPassword(email: string, code: string, newPassword: string) {
-  const res = await httpFetch('/auth/reset-password', {
+  const res = await httpFetch('/api/auth/reset-password', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, code, newPassword })
@@ -46,5 +46,17 @@ export async function resetPassword(email: string, code: string, newPassword: st
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data?.message || `Failed (${res.status})`);
   log('account.resetPassword ok');
+  return data;
+}
+
+export async function verifyReset(email: string, code: string) {
+  const res = await httpFetch('/api/auth/verify-reset', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, code })
+  }, false);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.message || `Failed (${res.status})`);
+  log('account.verifyReset ok');
   return data;
 }
