@@ -23,7 +23,7 @@ export async function login(email: string, password: string) {
       deviceInfo = await Device.getInfo();
     }
   } catch {}
-  // v2-only: use versionless token endpoint
+  // Token system: use canonical versionless token endpoint
   let res: Response;
   try {
     res = await httpFetch('/api/auth/token/login', {
@@ -40,7 +40,10 @@ export async function login(email: string, password: string) {
           osVersion: deviceInfo?.osVersion || undefined,
           model: deviceInfo?.model || undefined,
           manufacturer: deviceInfo?.manufacturer || undefined,
-          isVirtual: deviceInfo?.isVirtual ?? undefined
+          isVirtual: deviceInfo?.isVirtual ?? undefined,
+          uuid: deviceInfo?.uuid || undefined,
+          appVersion: deviceInfo?.appVersion || undefined,
+          appBuild: deviceInfo?.appBuild || undefined,
         }
       })
     }, false);
@@ -95,10 +98,10 @@ export async function login(email: string, password: string) {
   }
   setDriftFromHeaders(res.headers);
   const data = await res.json();
-  // v2 flow only: access + refresh
+  // Token flow: access + refresh
   if (data?.success && data.accessToken && data.refreshToken) {
     await tokens.set({ accessToken: data.accessToken, refreshToken: data.refreshToken });
-    log('auth.login ok (v2); tokens set');
+  log('auth.login ok; tokens set');
     return data;
   }
   warn('auth.login response unexpected', data);
