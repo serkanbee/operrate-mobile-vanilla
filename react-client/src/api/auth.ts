@@ -44,6 +44,7 @@ export async function login(email: string, password: string) {
           uuid: deviceInfo?.uuid || undefined,
           appVersion: deviceInfo?.appVersion || undefined,
           appBuild: deviceInfo?.appBuild || undefined,
+
         }
       })
     }, false);

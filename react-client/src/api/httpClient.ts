@@ -138,6 +138,7 @@ export async function httpFetch(input: string, init: RequestInit = {}, retry = t
     ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
   };
   const res = await fetch(url, { ...init, headers });
+  setDriftFromHeaders(res.headers); // sync drift from every response
   log('httpFetch', { url, status: res.status });
   if (res.status === 403) {
     // Try to detect blocked account
@@ -173,6 +174,7 @@ export async function httpFetch(input: string, init: RequestInit = {}, retry = t
   const retryHeaders: HeadersInit = { 'x-capacitor': '1', 'x-device-id': DEVICE_ID || '', 'x-device-name': DEVICE_NAME, ...(init.headers || {}), ...(newAccess ? { Authorization: `Bearer ${newAccess}` } : {}) };
   log('httpFetch retry after refresh', { url, hadNewAccess: !!newAccess });
   const retryRes = await fetch(url, { ...init, headers: retryHeaders });
+  setDriftFromHeaders(retryRes.headers); // sync drift from retry response
   if (retryRes.status === 401) {
     if ((hadAccess || hadRefresh) && !suppressFL) {
       emitForcedLogout({ reason: 'unauthorized', message: 'Your session has expired. Please sign in again.' });
