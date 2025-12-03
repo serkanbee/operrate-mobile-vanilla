@@ -64,11 +64,21 @@ export async function login(email: string, password: string) {
         const data = await res.clone().json().catch(() => undefined as any);
         if (data) {
           const msg = data?.message || 'Your account has been blocked. Please contact your administrator.';
+          
+          // Check for password reset requirement
+          if (data?.requirePasswordReset === true || /password reset required/i.test(String(msg))) {
+            const err: any = new Error(msg || 'Password reset required. Check your email for reset instructions.');
+            err.code = 'PASSWORD_RESET_REQUIRED';
+            throw err;
+          }
+          
+          // Check for blocked account
           if (data?.code === 'ACCOUNT_BLOCKED' || /blocked/i.test(String(msg))) {
             const err: any = new Error(msg);
             err.code = 'ACCOUNT_BLOCKED';
             throw err;
           }
+          
           throw new Error(msg);
         }
       }

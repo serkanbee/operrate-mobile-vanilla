@@ -78,7 +78,16 @@ const ResetPassword: React.FC = () => {
     } catch (err: any) {
       const msg = err?.message || 'Reset failed';
       warn('ResetPassword: failed', msg);
-      setErrorMsg(msg);
+      
+      // Show friendly message for password reuse
+      if (/cannot reuse/i.test(msg)) {
+        setErrorMsg('Cannot reuse recent passwords. Please choose a different password.');
+      } else if (/recent passwords/i.test(msg)) {
+        setErrorMsg(msg); // Server message already clear
+      } else {
+        setErrorMsg(msg);
+      }
+      
       setErrorOpen(true);
     } finally { setSubmitting(false); }
   };

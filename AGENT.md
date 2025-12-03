@@ -24,3 +24,6 @@
 - **DOM access**: Check element existence before use
 - **Async/await**: Preferred over Promise chains
 - **Constants**: Use SCREAMING_SNAKE_CASE for keys (e.g., `BACKEND_URL_KEY`)
+
+## Agent Reminders
+- Refer to the backend repository's `Global Reminders For Coder Agent.md` for the authoritative cross-project checklist; keep this mobile guide focused on platform-specific notes.

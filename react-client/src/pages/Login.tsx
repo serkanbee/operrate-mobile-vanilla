@@ -76,10 +76,16 @@ const Login: React.FC = () => {
     } catch (e: any) {
       const msg = e?.message || 'Sign in failed';
       warn('Login: failed', msg);
+      
       // If server said blocked, show inline; otherwise show toast
       if (e?.code === 'ACCOUNT_BLOCKED' || /blocked/i.test(msg)) {
         const m = msg || 'Your account has been blocked. Please contact your administrator.';
         setBlockedMsg(m);
+        setErrorMsg(m);
+        setErrorOpen(true);
+      } else if (e?.code === 'PASSWORD_RESET_REQUIRED' || /password reset required/i.test(msg)) {
+        // Admin forced password reset - show inline with clear instructions
+        const m = 'Your administrator requires you to reset your password. Check your email for instructions.';
         setErrorMsg(m);
         setErrorOpen(true);
       } else {
