@@ -17,8 +17,8 @@ const Login: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState(''); // inline message for ACCOUNT_BLOCKED specifically
   const [errorOpen, setErrorOpen] = useState(false);
-    const [toastOpen, setToastOpen] = useState(false);
-    const [toastText, setToastText] = useState('Login failed');
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastText, setToastText] = useState('Login failed');
   const [blockedMsg, setBlockedMsg] = useState(''); // preserve last blocked message
   const auth = useAuth();
   // Track timers across view entries for cleanup
@@ -35,7 +35,7 @@ const Login: React.FC = () => {
         if (obj?.v === 1 && obj?.msg) setPostToast(obj.msg);
         localStorage.removeItem('postLoginToast');
       }
-    } catch {}
+    } catch { }
 
     // Then schedule welcome toasts if requested and fresh
     const raw = localStorage.getItem('showLoginWelcomeToasts');
@@ -48,7 +48,7 @@ const Login: React.FC = () => {
           t1Ref.current = setTimeout(() => setShowInitToast(true), 150);
           t2Ref.current = setTimeout(() => setShowPromptToast(true), 2300);
         }
-      } catch {}
+      } catch { }
       // Clean up the flag regardless (stale or used)
       localStorage.removeItem('showLoginWelcomeToasts');
     }
@@ -61,8 +61,8 @@ const Login: React.FC = () => {
   });
 
   const onSignIn = async () => {
-  setErrorOpen(false);
-  setErrorMsg('');
+    setErrorOpen(false);
+    setErrorMsg('');
     if (!email || !password) {
       setErrorMsg('Enter email and password');
       setErrorOpen(true);
@@ -76,11 +76,16 @@ const Login: React.FC = () => {
     } catch (e: any) {
       const msg = e?.message || 'Sign in failed';
       warn('Login: failed', msg);
-      
+
       // If server said blocked, show inline; otherwise show toast
       if (e?.code === 'ACCOUNT_BLOCKED' || /blocked/i.test(msg)) {
         const m = msg || 'Your account has been blocked. Please contact your administrator.';
         setBlockedMsg(m);
+        setErrorMsg(m);
+        setErrorOpen(true);
+      } else if (e?.code === 'ROLE_EXPIRED' || /role.*expired/i.test(msg)) {
+        // Role expired - show inline with clear instructions
+        const m = msg || 'Your role has expired. Please contact an administrator to renew your access.';
         setErrorMsg(m);
         setErrorOpen(true);
       } else if (e?.code === 'PASSWORD_RESET_REQUIRED' || /password reset required/i.test(msg)) {
@@ -119,9 +124,9 @@ const Login: React.FC = () => {
 
           <h2 className="login-title">Sign In</h2>
           <IonText className="login-subtitle">Get access to your account</IonText>
-      {errorOpen && (
+          {errorOpen && (
             <div className="inline-alert" role="alert">
-        <span className="msg">{blockedMsg || errorMsg}</span>
+              <span className="msg">{blockedMsg || errorMsg}</span>
               <button className="close-btn" aria-label="Close" onClick={() => setErrorOpen(false)}>×</button>
             </div>
           )}
@@ -131,14 +136,14 @@ const Login: React.FC = () => {
               <div className="field-label">EMAIL ADDRESS</div>
               <IonItem className="login-input" lines="none">
                 <IonIcon slot="start" icon={person} />
-        <IonInput aria-label="Email address" inputmode="email" placeholder="name@example.com" value={email} onIonInput={(e:any)=>setEmail(e.detail.value||'')} />
+                <IonInput aria-label="Email address" inputmode="email" placeholder="name@example.com" value={email} onIonInput={(e: any) => setEmail(e.detail.value || '')} />
               </IonItem>
             </div>
             <div className="field">
               <div className="field-label">PASSWORD</div>
               <IonItem className="login-input" lines="none">
                 <IonIcon slot="start" icon={key} />
-        <IonInput aria-label="Password" type={showPassword ? 'text' : 'password'} placeholder="Password" value={password} onIonInput={(e:any)=>setPassword(e.detail.value||'')} />
+                <IonInput aria-label="Password" type={showPassword ? 'text' : 'password'} placeholder="Password" value={password} onIonInput={(e: any) => setPassword(e.detail.value || '')} />
                 <IonButton slot="end" fill="clear" className="toggle-btn" aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword(v => !v)}>
                   <IonIcon icon={showPassword ? eyeOff : eye} />
                 </IonButton>
@@ -149,11 +154,11 @@ const Login: React.FC = () => {
             </div>
           </IonList>
 
-      <IonButton expand="block" className="login-primary" onClick={onSignIn} disabled={submitting}>{submitting ? 'Signing in…' : 'Sign In'}</IonButton>
+          <IonButton expand="block" className="login-primary" onClick={onSignIn} disabled={submitting}>{submitting ? 'Signing in…' : 'Sign In'}</IonButton>
         </div>
 
         {/* Divider and biometrics */}
-  <div className="login-bottom">
+        <div className="login-bottom">
           <div className="biometric-caption action-label">Biometric sign-in</div>
           <div className="bio-center">
             <IonButton fill="outline" className="quick-btn bio-btn" aria-label="Sign in with biometrics">
@@ -162,10 +167,10 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-  <IonToast isOpen={showInitToast} message="Your server connection is ready" position="top" duration={1600} color="success" onDidDismiss={() => setShowInitToast(false)} />
-  <IonToast isOpen={showPromptToast} message="Please sign in" position="top" duration={2200} color="success" onDidDismiss={() => setShowPromptToast(false)} />
-  <IonToast isOpen={!!postToast} message={postToast} position="top" duration={2200} color="success" onDidDismiss={()=>setPostToast('')} />
-  <IonToast isOpen={toastOpen} message={toastText} position="top" duration={2000} color="danger" onDidDismiss={()=>setToastOpen(false)} />
+        <IonToast isOpen={showInitToast} message="Your server connection is ready" position="top" duration={1600} color="success" onDidDismiss={() => setShowInitToast(false)} />
+        <IonToast isOpen={showPromptToast} message="Please sign in" position="top" duration={2200} color="success" onDidDismiss={() => setShowPromptToast(false)} />
+        <IonToast isOpen={!!postToast} message={postToast} position="top" duration={2200} color="success" onDidDismiss={() => setPostToast('')} />
+        <IonToast isOpen={toastOpen} message={toastText} position="top" duration={2000} color="danger" onDidDismiss={() => setToastOpen(false)} />
       </IonContent>
     </IonPage>
   );

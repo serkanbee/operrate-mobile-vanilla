@@ -22,7 +22,7 @@ export async function login(email: string, password: string) {
     if (Device?.getInfo) {
       deviceInfo = await Device.getInfo();
     }
-  } catch {}
+  } catch { }
   // Token system: use canonical versionless token endpoint
   let res: Response;
   try {
@@ -64,21 +64,28 @@ export async function login(email: string, password: string) {
         const data = await res.clone().json().catch(() => undefined as any);
         if (data) {
           const msg = data?.message || 'Your account has been blocked. Please contact your administrator.';
-          
+
+          // Check for role expiration
+          if (data?.roleExpired === true || /role.*expired/i.test(String(msg))) {
+            const err: any = new Error(msg || 'Your role has expired. Please contact an administrator to renew your access.');
+            err.code = 'ROLE_EXPIRED';
+            throw err;
+          }
+
           // Check for password reset requirement
           if (data?.requirePasswordReset === true || /password reset required/i.test(String(msg))) {
             const err: any = new Error(msg || 'Password reset required. Check your email for reset instructions.');
             err.code = 'PASSWORD_RESET_REQUIRED';
             throw err;
           }
-          
+
           // Check for blocked account
           if (data?.code === 'ACCOUNT_BLOCKED' || /blocked/i.test(String(msg))) {
             const err: any = new Error(msg);
             err.code = 'ACCOUNT_BLOCKED';
             throw err;
           }
-          
+
           throw new Error(msg);
         }
       }
@@ -90,7 +97,7 @@ export async function login(email: string, password: string) {
           err.code = 'ACCOUNT_BLOCKED';
           throw err;
         }
-      } catch {}
+      } catch { }
       throw new Error('Login failed (403)');
     }
 
@@ -99,7 +106,7 @@ export async function login(email: string, password: string) {
       try {
         const data = await res.clone().json();
         throw new Error(data?.message || `Login failed (${status})`);
-      } catch {}
+      } catch { }
     }
     throw new Error(`Login failed (${status})`);
   }
@@ -112,7 +119,7 @@ export async function login(email: string, password: string) {
   // Token flow: access + refresh
   if (data?.success && data.accessToken && data.refreshToken) {
     await tokens.set({ accessToken: data.accessToken, refreshToken: data.refreshToken });
-  log('auth.login ok; tokens set');
+    log('auth.login ok; tokens set');
     return data;
   }
   warn('auth.login response unexpected', data);
@@ -135,6 +142,6 @@ export async function logout() {
   }
   await tokens.clear();
   // Ensure any pending post-login toast (e.g., from password reset) cannot leak after logout
-  try { localStorage.removeItem('postLoginToast'); } catch {}
+  try { localStorage.removeItem('postLoginToast'); } catch { }
   log('auth.logout cleared tokens');
 }
